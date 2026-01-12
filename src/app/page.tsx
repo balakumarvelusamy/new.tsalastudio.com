@@ -1,58 +1,67 @@
-import type { Metadata } from 'next';
+import React from 'react';
+import Hero from '@/components/home/Hero';
+import CategoryGrid from '@/components/home/CategoryGrid';
+import AboutSection from '@/components/home/AboutSection';
+import AboutQuilting from '@/components/home/AboutQuilting';
+import StatsSection from '@/components/home/StatsSection';
+import WhyUs from '@/components/home/WhyUs';
+import Newsletter from '@/components/home/Newsletter';
+import config from '../config.json';
+import Link from 'next/link';
 
-export const metadata: Metadata = {
-  title: "Hobby Classes in Bengaluru - Tsala Quilting Studio",
-  description: "An idealistic hub located in the heart of Bengaluru for all Quilting & Hobby enthusiasts. Join our stitching, bag making, and craft workshops.",
-  keywords: ["Quilting", "Sewing", "Quilting Studio", "Bengaluru", "Tailoring", "Art & Craft Workshop"],
+async function getCategories() {
+  // TODO: Use new service URL when provided by user.
+  // const res = await fetch(`${config.service_url}getuserscategory`, { next: { revalidate: 3600 } });
+  // if (!res.ok) return [];
+  // const data = await res?.json() || [];
+  // return data?.filter((c: any) => c.isactive === 1);
+
+  return [
+    {
+      title: "Quilting Services",
+      subtitle: "Longarm Quilting",
+      imageurl: config.slider[0].image_url,
+      category: "Service",
+      type: "Service"
+    },
+    {
+      title: "Fabrics",
+      subtitle: "Premium Cotton",
+      imageurl: config.slider[1].image_url,
+      category: "Fabric",
+      type: "Product"
+    },
+    {
+      title: "Workshops",
+      subtitle: "Learn New Skills",
+      imageurl: config.slider[2].image_url,
+      category: "course",
+      type: "Course"
+    }
+  ];
+}
+
+export const metadata = {
+  title: 'Home | Tsala Studio',
+  description: 'Quilting, Selling, and Hobby Classes in Bengaluru.',
 };
 
-export default function Home() {
+export default async function Home() {
+  const categories = await getCategories();
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <section className="bg-white py-20 border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            Welcome to Tsala Studio
-          </h1>
-          <p className="mt-4 text-xl text-gray-500">
-            Hobby Classes in Bengaluru
-          </p>
-          <div className="mt-8">
-            <span className="text-gray-400">[Hero Carousel Placeholder]</span>
-          </div>
-        </div>
-      </section>
+    <div className="bg-gray-50 min-h-screen">
+      <Hero />
 
-      {/* Experience Section */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Experience Handmade Happiness</h2>
-          <div className="text-center py-10 bg-gray-100 rounded-lg">
-            <p className="text-gray-500">[Experience Content Placeholder]</p>
-          </div>
-        </div>
-      </section>
+      <CategoryGrid categories={categories} />
 
-      {/* Services/Why Tsala Section */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Why Tsala?</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white p-6 rounded shadow text-center">Stitching & Tailoring</div>
-            <div className="bg-white p-6 rounded shadow text-center">Bag Making</div>
-            <div className="bg-white p-6 rounded shadow text-center">Knitting & Crochet</div>
-            <div className="bg-white p-6 rounded shadow text-center">Arts & Crafts</div>
-          </div>
-        </div>
-      </section>
+      <AboutSection />
+      <AboutQuilting />
+      <WhyUs />
 
-      {/* Info/Testimonials Placeholder */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-500">[Information & Testimonials Placeholder]</p>
-        </div>
-      </section>
+      <StatsSection />
+
+      <Newsletter />
     </div>
   );
 }

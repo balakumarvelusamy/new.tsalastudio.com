@@ -1,0 +1,145 @@
+{
+    "status": 200,
+    "data": [
+        {
+            "category": "Products",
+            "isactive": 1,
+            "subtitle": "Handmade Happiness",
+            "createddate": {
+                "seconds": 1631592000,
+                "nanoseconds": 0
+            },
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat3.jpg?alt=media&token=2d765867-bbf2-4b0b-8265-95dc7ea67ed1",
+            "title": "Handmade Happiness"
+        },
+        {
+            "type": "blog",
+            "category": "Tutorials",
+            "createddate": {
+                "seconds": 1631937600,
+                "nanoseconds": 0
+            }
+        },
+        {
+            "type": "blog",
+            "isactive": "1",
+            "category": "News",
+            "createddate": {
+                "seconds": 1631937600,
+                "nanoseconds": 0
+            }
+        },
+        {
+            "type": "course",
+            "category": "Course",
+            "createddate": {
+                "seconds": 1631937600,
+                "nanoseconds": 0
+            }
+        },
+        {
+            "createddate": {
+                "seconds": 1631764800,
+                "nanoseconds": 0
+            },
+            "category": "Fabrics",
+            "isactive": 1,
+            "title": "Fabrics",
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat1.jpg?alt=media&token=0973189b-c5af-459e-86be-1548ac945694",
+            "subtitle": "Fabrics"
+        },
+        {
+            "subtitle": "Learning Course",
+            "category": "Course",
+            "createddate": {
+                "seconds": 1631851200,
+                "nanoseconds": 0
+            },
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat5.jpg?alt=media&token=5d486165-6347-4752-8881-6f3c2fd894d5",
+            "isactive": 1,
+            "title": "Our Courses"
+        },
+        {
+            "isactive": 1,
+            "type": "posttype",
+            "category": "course"
+        },
+        {
+            "isactive": 1,
+            "type": "posttype",
+            "category": "blog"
+        },
+        {
+            "createddate": {
+                "seconds": 1635220800,
+                "nanoseconds": 0
+            },
+            "isactive": 1,
+            "category": "Products",
+            "type": "product",
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat3.jpg?alt=media&token=2d765867-bbf2-4b0b-8265-95dc7ea67ed1"
+        },
+        {
+            "isactive": 1,
+            "createddate": {
+                "seconds": 1631937600,
+                "nanoseconds": 0
+            },
+            "type": "product",
+            "category": "Quilt Batting",
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat2.jpg?alt=media&token=2b09fb45-7c5d-4f90-8360-edf4459f89a3"
+        },
+        {
+            "isactive": 1,
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat1.jpg?alt=media&token=0973189b-c5af-459e-86be-1548ac945694",
+            "type": "product",
+            "category": "Fabrics",
+            "createddate": {
+                "seconds": 1635220800,
+                "nanoseconds": 0
+            }
+        },
+        {
+            "category": "quilting",
+            "type": "course",
+            "id": "course_40807b6-f8d2-34e2-2ec1-afd8f0251015",
+            "createddate": "2023-03-21T06:58:57.388Z",
+            "isactive": 1
+        },
+        {
+            "type": "course",
+            "category": "Hand Embroidery",
+            "id": "course_e8f1735-132e-73d7-a8c3-bca288a3687f",
+            "isactive": 1,
+            "createddate": "2023-02-15T09:36:57.327Z"
+        },
+        {
+            "subtitle": "Quilting Notions",
+            "title": "Quilting Notions",
+            "createddate": {
+                "seconds": 1631678400,
+                "nanoseconds": 0
+            },
+            "isactive": 1,
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat2.jpg?alt=media&token=fbc08add-ea5b-4868-abeb-5d5205a6d191",
+            "category": "Quilt Batting"
+        },
+        {
+            "isactive": 1,
+            "id": "product_28454-31e1-a1b6-c4a3-8aea3c01b85d",
+            "createddate": "2023-08-31T11:11:19.808Z",
+            "category": "quilting tools",
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat4.jpg?alt=media&token=596c3435-1a5f-4f86-b85c-d0ae9fc179e9",
+            "type": "product"
+        },
+        {
+            "category": "fat quarter",
+            "createddate": "2023-08-31T06:41:14.688Z",
+            "id": "product_65273b-224b-f02d-2c1-44a666bef2e",
+            "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fcategory%2Fcat7.jpg?alt=media&token=b8fd1e3b-749c-4003-8515-0335deaf9837",
+            "isactive": 1,
+            "type": "product"
+        },
+        {}
+    ]
+}
