@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   description: "Hobby Classes in Bengaluru - Quilting, Sewing, and Crafts.",
   icons: {
-    icon: config.logo,
+    icon: '/tsala-logo.png',
   },
   openGraph: {
     type: 'website',

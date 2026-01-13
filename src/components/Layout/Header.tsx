@@ -8,12 +8,12 @@ const Header = () => {
     return (
         <header className="sticky top-0 z-50 bg-black text-white border-b border-gray-800 shadow-sm">
             <div className="container mx-auto px-4 lg:px-12 max-w-[1440px]">
-                <div className="flex flex-wrap md:flex-nowrap justify-between items-center py-4 md:py-0 md:h-20 gap-4">
+                <div className="flex flex-wrap md:flex-nowrap justify-between items-center py-4 md:py-0 md:h-20">
                     {/* Logo */}
-                    <div className="flex-shrink-0 flex items-center">
+                    <div className="flex-shrink-0 flex items-center order-1">
                         <Link href="/" className="flex items-center gap-2">
                             {config.logo ? (
-                                <img className="h-12 w-auto" src={config.logo} alt={config.title} />
+                                <img className="h-10 w-auto" src={config.logo} alt={config.title} />
                             ) : (
                                 <span className="text-2xl font-bold font-heading text-primary">Tsala Studio</span>
                             )}
@@ -21,7 +21,7 @@ const Header = () => {
                     </div>
 
                     {/* Navigation */}
-                    <nav className="order-3 md:order-2 w-full md:w-auto flex flex-wrap justify-center gap-4 md:gap-8">
+                    <nav className="order-3 md:order-2 w-full md:w-auto flex flex-wrap justify-center gap-4 md:gap-8 mt-4 md:mt-0">
                         {[
                             { name: 'Home', href: '/' },
                             { name: 'About Us', href: '/about' },
