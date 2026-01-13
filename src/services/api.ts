@@ -17,6 +17,7 @@ export const getItemsByType = async (type: string) => {
         }
 
         const data = await response.json();
+
         return data || [];
     } catch (err) {
         console.error("Error getting items:", err);

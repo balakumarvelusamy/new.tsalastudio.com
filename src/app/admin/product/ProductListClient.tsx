@@ -1,114 +1,138 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-
-
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import { PencilSquareIcon, TrashIcon, EyeIcon, EyeSlashIcon, CheckCircleIcon, XCircleIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, TrashIcon, XMarkIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import { deleteItem, saveItem, getItemsByType } from '../../../services/api';
-import CourseForm from './CourseForm';
+import ProductForm from './ProductForm';
 
-interface Course {
-    id: string; // Primary Key
-    post_id?: string; // Legacy/Secondary Key
-    posttitle: string;
-    post_image: string;
-    isactive: number;
-    published: number;
-    slug?: string;
-    createddate?: string;
+interface Product {
+    id: string;
+    posttitle: string; // Mapped from p_name
+    p_image: string; // Mapped from p_image
+    p_price: string;
+    p_actual_price?: string; // Optional field
+    p_category: string;
+    isactive: number; // 1 or 0
+    type: string;
+    createddate: string;
     [key: string]: any;
 }
 
-export default function CourseListClient({ initialCourses }: { initialCourses: any[] }) {
-    const [courses, setCourses] = useState<Course[]>(initialCourses);
+export default function ProductListClient({ initialProducts }: { initialProducts: any[] }) {
+    const [products, setProducts] = useState<Product[]>(initialProducts);
     const [loading, setLoading] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const router = useRouter();
 
     const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this course? This action cannot be undone.')) return;
+        if (!confirm('Are you sure you want to delete this product? This action cannot be undone.')) return;
 
         setLoading(true);
         try {
             await deleteItem(id);
-            // setCourses(prev => prev.filter(c => (c.id || c.post_id) !== id)); // Optimistic local remove
-            fetchCourses(); // Fetch fresh list to be sure
+            // Optimistic - or just re-fetch
+            fetchProducts();
             router.refresh();
         } catch (err) {
-            alert('Failed to delete course');
+            alert('Failed to delete product');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleToggle = async (course: Course, field: 'isactive' | 'published') => {
-        const newValue = course[field] === 1 ? 0 : 1;
-        const updatedCourse = { ...course, [field]: newValue };
+    const handleToggle = async (product: Product, field: 'isactive') => {
+        const newValue = product[field] === 1 ? 0 : 1;
+        const updatedProduct = { ...product, [field]: newValue };
 
         // Optimistic update
-        setCourses(prev => prev.map(c => ((c.id || c.post_id) === (course.id || course.post_id) ? updatedCourse : c)));
+        setProducts(prev => prev.map(p => (p.id === product.id ? updatedProduct : p)));
 
         try {
-            await saveItem(updatedCourse);
+            await saveItem(updatedProduct);
             router.refresh();
         } catch (err) {
             console.error(err);
-            setCourses(prev => prev.map(c => ((c.id || c.post_id) === (course.id || course.post_id) ? course : c)));
+            setProducts(prev => prev.map(p => (p.id === product.id ? product : p)));
             alert(`Failed to update ${field}`);
         }
     };
 
-    const openModal = (course?: Course) => {
-        setEditingCourse(course || null);
+    const openModal = (product?: Product) => {
+        setEditingProduct(product || null);
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        setEditingCourse(null);
+        setEditingProduct(null);
     };
 
-    const fetchCourses = async () => {
+    const fetchProducts = async () => {
         setLoading(true);
         try {
-            const data = await getItemsByType('course');
-            // Ensure data is array and sort by createddate desc
+            const data = await getItemsByType('product');
             const sortedData = Array.isArray(data) ? data.sort((a: any, b: any) =>
-                new Date(b.createddate || 0).getTime() - new Date(a.createddate || 0).getTime()
+                new Date(b.createddate).getTime() - new Date(a.createddate).getTime()
             ) : [];
-            setCourses(sortedData);
+            setProducts(sortedData);
         } catch (err) {
-            console.error("Failed to fetch courses", err);
-            setCourses([]);
+            console.error("Failed to fetch products", err);
+            setProducts([]);
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchCourses();
+        // Fix for potential stale data if traversing via client-side nav
+        fetchProducts();
     }, []);
 
     const handleFormSuccess = async () => {
         closeModal();
-        await fetchCourses();
+        await fetchProducts();
         router.refresh();
     };
 
+    // Filter products based on search term
+    const filteredProducts = products.filter(product =>
+        product.posttitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.p_category?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     return (
         <div>
-            {/* Header / Add Button */}
-            <div className="flex justify-end p-4">
-                <button
-                    onClick={() => openModal()}
-                    className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors shadow-sm text-sm font-medium flex items-center gap-2"
-                >
-                    + Add New Course
-                </button>
+            {/* Header / Add Button / Search */}
+            <div className="flex flex-col md:flex-row justify-between items-center gap-4 p-4 mb-4 bg-white rounded-xl shadow-sm border border-gray-100">
+                <div className="flex items-center gap-2">
+                    <h2 className="text-lg font-bold text-gray-800">All Products</h2>
+                    <span className="px-2 py-1 bg-gray-100 text-gray-600 rounded-full text-xs font-medium">
+                        {filteredProducts.length}
+                    </span>
+                </div>
+
+                <div className="flex flex-1 max-w-md w-full gap-2">
+                    <div className="relative flex-1">
+                        <MagnifyingGlassIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                            type="text"
+                            placeholder="Search products..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary text-sm"
+                        />
+                    </div>
+                    <button
+                        onClick={() => openModal()}
+                        className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors shadow-sm text-sm font-medium flex items-center gap-2 whitespace-nowrap"
+                    >
+                        <span>+ Add Product</span>
+                    </button>
+                </div>
             </div>
 
             {/* Table */}
@@ -121,16 +145,22 @@ export default function CourseListClient({ initialCourses }: { initialCourses: a
                                     Image
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Title
+                                    Product Name
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Category
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Created
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Status
+                                    Price
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                    Published
+                                    Offer Price
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Active
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Actions
@@ -138,21 +168,21 @@ export default function CourseListClient({ initialCourses }: { initialCourses: a
                             </tr>
                         </thead>
                         <tbody className="bg-white divide-y divide-gray-200">
-                            {courses.length === 0 ? (
+                            {filteredProducts.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-gray-500">
-                                        No courses found.
+                                    <td colSpan={8} className="px-6 py-12 text-center text-gray-500">
+                                        No products found matching your search.
                                     </td>
                                 </tr>
                             ) : (
-                                courses.map((course) => (
-                                    <tr key={course.id || course.post_id} className="hover:bg-gray-50 transition-colors">
+                                filteredProducts.map((product) => (
+                                    <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="h-12 w-16 bg-gray-100 rounded-md overflow-hidden relative">
-                                                {course.post_image ? (
+                                                {product.p_image ? (
                                                     <img
-                                                        src={course.post_image}
-                                                        alt={course.posttitle}
+                                                        src={product.p_image}
+                                                        alt={product.posttitle}
                                                         className="h-full w-full object-cover"
                                                     />
                                                 ) : (
@@ -163,48 +193,46 @@ export default function CourseListClient({ initialCourses }: { initialCourses: a
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm font-medium text-gray-900 line-clamp-2 max-w-xs" title={course.posttitle}>
-                                                {course.posttitle}
+                                            <div className="text-sm font-medium text-gray-900 line-clamp-2 max-w-xs" title={product.posttitle}>
+                                                {product.posttitle}
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4">
-                                            <div className="text-sm font-medium text-gray-900 line-clamp-2 max-w-xs" title={course.posttitle}>
-                                                {course.createddate ? new Date(course.createddate).toLocaleDateString() : '-'}
-                                            </div>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {product.p_category || '-'}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {new Date(product.createddate).toLocaleDateString()}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {product.p_price ? `₹${product.p_price}` : '-'}
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {product.p_actual_price ? (
+                                                <span className="line-through text-gray-400">₹{product.p_actual_price}</span>
+                                            ) : '-'}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <button
-                                                onClick={() => handleToggle(course, 'isactive')}
-                                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${course.isactive === 1
+                                                onClick={() => handleToggle(product, 'isactive')}
+                                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${product.isactive === 1
                                                     ? 'bg-green-100 text-green-800 border-green-200 hover:bg-green-200'
                                                     : 'bg-red-100 text-red-800 border-red-200 hover:bg-red-200'
                                                     }`}
                                             >
-                                                {course.isactive === 1 ? 'Active' : 'Inactive'}
-                                            </button>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <button
-                                                onClick={() => handleToggle(course, 'published')}
-                                                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${course.published === 1
-                                                    ? 'bg-blue-100 text-blue-800 border-blue-200 hover:bg-blue-200'
-                                                    : 'bg-gray-100 text-gray-800 border-gray-200 hover:bg-gray-200'
-                                                    }`}
-                                            >
-                                                {course.published === 1 ? 'Published' : 'Draft'}
+                                                {product.isactive === 1 ? 'Active' : 'Inactive'}
                                             </button>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                                             <div className="flex justify-end gap-2">
                                                 <button
-                                                    onClick={() => openModal(course)}
+                                                    onClick={() => openModal(product)}
                                                     className="text-primary hover:text-primary/80 p-1 hover:bg-primary/5 rounded-full transition-colors"
                                                     title="Edit"
                                                 >
                                                     <PencilSquareIcon className="w-5 h-5" />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDelete(course.id)}
+                                                    onClick={() => handleDelete(product.id)}
                                                     className="text-red-600 hover:text-red-900 p-1 hover:bg-red-50 rounded-full transition-colors"
                                                     title="Delete"
                                                     disabled={loading}
@@ -232,10 +260,9 @@ export default function CourseListClient({ initialCourses }: { initialCourses: a
                             <XMarkIcon className="w-6 h-6 text-gray-600" />
                         </button>
                         <div className="p-1">
-                            {/* Reusing CourseForm, adding padding wrapper if needed, but Form has its own padding/style */}
-                            <CourseForm
-                                initialData={editingCourse || undefined}
-                                isEditMode={!!editingCourse}
+                            <ProductForm
+                                initialData={editingProduct || undefined}
+                                isEditMode={!!editingProduct}
                                 onSuccess={handleFormSuccess}
                             />
                         </div>

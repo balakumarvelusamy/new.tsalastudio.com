@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { saveItem, getSecrets } from '../../../services/api';
 import { uploadToS3 } from '../s3Utils';
 import legacyCourses from '../../../data/courses.json';
+import legacyProducts from '../../../data/products.json';
 import { useRouter } from 'next/navigation';
 
 export default function MigratePage() {
@@ -53,32 +54,34 @@ export default function MigratePage() {
         setProgress(0);
 
         try {
-            const total = legacyCourses.length;
+            const total = legacyProducts.length;
             let successCount = 0;
 
             for (let i = 0; i < total; i++) {
-                const item = legacyCourses[i];
-                addLog(`Processing ${i + 1}/${total}: ${item.posttitle}`);
+                const item = legacyProducts[i];
+                const title = item.p_name || 'Untitled Product';
+                addLog(`Processing ${i + 1}/${total}: ${title}`);
 
-                let imageUrl = item.post_image;
+                let imageUrl = item.p_image || '';
 
                 // Ensure ID
                 const id = item.id || crypto.randomUUID();
 
                 // 1. Handle Image Migration
-                if (item.post_image && item.post_image.includes('firebasestorage')) {
+                if (imageUrl && imageUrl.includes('firebasestorage')) {
                     addLog(`  > Downloading image...`);
-                    const blob = await fetchImage(item.post_image);
+                    const blob = await fetchImage(imageUrl);
 
                     if (blob) {
                         const ext = blob.type.split('/')[1] || 'jpg';
-                        // Use id + slug for filename
-                        const baseName = `${id}-${item.slug || 'image'}`;
+                        // Use id + slug-like title for filename
+                        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                        const baseName = `${id}-${slug}`;
                         const filename = `${baseName}.${ext}`;
 
                         addLog(`  > Uploading to S3 as ${filename}...`);
                         try {
-                            const newUrl = await uploadToS3(blob, filename, secret, 'course');
+                            const newUrl = await uploadToS3(blob, filename, secret, 'products');
                             imageUrl = newUrl;
                             addLog(`  > Upload success: ${newUrl}`);
                         } catch (s3Err: any) {
@@ -92,17 +95,16 @@ export default function MigratePage() {
                 }
 
                 // 2. Prepare Data
-                // Ensure ID - already defined above
-                // const id = item.id || item.id || crypto.randomUUID();
-
-                // Construct payload matching CourseForm structure
+                // Construct payload matching Product structure
                 const payload = {
                     ...item,
                     id: id,
-                    post_image: imageUrl,
-                    type: 'course', // Enforce type
+                    posttitle: title, // Map p_name to posttitle for consistency or keep p_name? Sticking to raw item + id + type override
+                    p_image: imageUrl,
+                    type: 'product', // Enforce type
                     createdby: item.createdby || 'MigrationTool',
-                    updateddate: new Date().toISOString()
+                    updateddate: new Date().toISOString(),
+                    slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
                 };
 
                 // 3. Save to DB
@@ -122,8 +124,8 @@ export default function MigratePage() {
                 await new Promise(r => setTimeout(r, 500));
 
                 // TESTING: Stop after 1 item
-                // addLog("Testing Mode: Stopping after first item.");
-                // break;
+                //addLog("Testing Mode: Stopping after first item.");
+                //break;
             }
 
             addLog(`Migration Complete! Successfully migrated ${successCount}/${total} items.`);
@@ -141,9 +143,9 @@ export default function MigratePage() {
 
             <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
                 <div className="mb-4">
-                    <h2 className="text-lg font-semibold text-gray-800">Legacy Course Migration</h2>
+                    <h2 className="text-lg font-semibold text-gray-800">Legacy Product Migration</h2>
                     <p className="text-gray-500 text-sm mt-1">
-                        Found <strong>{legacyCourses.length}</strong> items in <code>src/data/courses.json</code>.
+                        Found <strong>{legacyProducts.length}</strong> items in <code>src/data/products.json</code>.
                     </p>
                 </div>
 

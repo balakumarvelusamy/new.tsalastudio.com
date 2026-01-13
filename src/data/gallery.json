@@ -1,35 +1,5 @@
 [
     {
-        "gallery_id": "6bd07ee-a472-77de-4d83-4073ae7bd8",
-        "createdby": "Tsalastudio Admin",
-        "updateddate": "2025-12-02T09:11:11.018Z",
-        "viewingallery": 1,
-        "imageurl": "",
-        "description": "",
-        "width": 1,
-        "displaydate": "December 2, 2025",
-        "createddate": "2025-12-02T09:10:30.207Z",
-        "isactive": 1,
-        "height": 1,
-        "title": "Scrap",
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe"
-    },
-    {
-        "description": "",
-        "createddate": "2025-12-02T09:09:05.583Z",
-        "width": 1,
-        "createdby": "Tsalastudio Admin",
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe",
-        "viewingallery": 1,
-        "title": "Scrappy",
-        "displaydate": "December 2, 2025",
-        "isactive": 1,
-        "gallery_id": "7e76-c384-e7c-c022-80127ac242a",
-        "updateddate": "2025-12-02T09:09:15.789Z",
-        "height": 1,
-        "imageurl": ""
-    },
-    {
         "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/Tsalastudio%20Admin-ca86c7-4e41-8bd-1acd-66dcf8b82fe%2Fgallery%2F7ca27a0-d16f-1e66-c42a-d4133f37354?alt=media&token=a3b246b3-8e91-412f-97ae-ae442c37b72e",
         "title": "DAHLIA WORKSHOP",
         "displaydate": "November 10, 2025",
@@ -43,21 +13,6 @@
         "description": "",
         "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe",
         "isactive": 1
-    },
-    {
-        "displaydate": "August 11, 2025",
-        "width": 1,
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe",
-        "createdby": "Tsalastudio Admin",
-        "title": "Freedom Sale",
-        "viewingallery": 1,
-        "isactive": 1,
-        "gallery_id": "37383c5-b46-afeb-3fd6-5aa21f6f508f",
-        "updateddate": "2025-08-11T11:22:20.873Z",
-        "height": 1,
-        "createddate": "2025-08-11T11:20:54.444Z",
-        "imageurl": "",
-        "description": ""
     },
     {
         "displaydate": "March 31, 2025",
@@ -75,21 +30,6 @@
         "description": ""
     },
     {
-        "title": "Quilt-as-you-go Scrappy Quilt",
-        "displaydate": "January 3, 2025",
-        "viewingallery": 1,
-        "imageurl": "",
-        "gallery_id": "248f4eb-c58a-1427-b5ac-8e236c3746f6",
-        "updateddate": "2025-01-03T06:57:30.697Z",
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe",
-        "createdby": "Tsalastudio Admin",
-        "createddate": "2025-01-03T06:57:10.565Z",
-        "height": 1,
-        "isactive": 1,
-        "description": "",
-        "width": 1
-    },
-    {
         "isactive": 1,
         "width": 1,
         "viewingallery": 0,
@@ -102,21 +42,6 @@
         "title": "INTERLEAVE TECHNIQUE WORKSHOP",
         "height": 1,
         "description": ""
-    },
-    {
-        "createdby": "Tsalastudio Admin",
-        "displaydate": "June 11, 2024",
-        "isactive": 1,
-        "description": "",
-        "width": 1,
-        "viewingallery": 1,
-        "height": 1,
-        "title": "Bleach Art Workshop",
-        "imageurl": "",
-        "updateddate": "2024-06-11T05:37:36.226Z",
-        "gallery_id": "28e056d-1f73-1277-b4d8-ec07f12bc7",
-        "createddate": "2024-06-11T05:31:47.063Z",
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe"
     },
     {
         "gallery_id": "4ce3bdf-7fac-7b7-a270-603e7b6b67d",
@@ -146,64 +71,6 @@
         "updateddate": "2024-05-23T06:14:03.849Z",
         "gallery_id": "31124cf-af5-58e5-3f6-edd5f3e8b0a2",
         "createdby": "Tsalastudio Admin"
-    },
-    {
-        "imageurl": "",
-        "description": "",
-        "updateddate": "2024-03-20T05:39:32.389Z",
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe",
-        "gallery_id": "4ded68-f5f0-3d1f-67e3-537722aca",
-        "isactive": 1,
-        "width": 1,
-        "createddate": "2024-03-20T05:39:13.350Z",
-        "height": 1,
-        "title": "Kaudhi Workshop",
-        "displaydate": "March 20, 2024",
-        "createdby": "Tsalastudio Admin",
-        "viewingallery": 1
-    },
-    {
-        "isactive": 1,
-        "createdby": "Tsalastudio Admin",
-        "description": "",
-        "viewingallery": 1,
-        "displaydate": "February 16, 2024",
-        "width": 1,
-        "createddate": "2024-02-16T04:54:24.388Z",
-        "gallery_id": "10b1a17-218-4e1d-32c5-4d30b02dada",
-        "height": 1,
-        "imageurl": "",
-        "updateddate": "2025-03-31T08:47:38.230Z",
-        "title": "Poster",
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe"
-    },
-    {
-        "description": "",
-        "gallery_id": "812273d-4a5-aedc-e450-ddcae7c30672",
-        "createdby": "Tsalastudio Admin",
-        "createddate": "2024-01-24T10:55:25.709Z",
-        "isactive": 1,
-        "width": 1,
-        "displaydate": "January 24, 2024",
-        "imageurl": "",
-        "viewingallery": 0,
-        "height": 1,
-        "title": "Rainbow Themed Scandinavian Heart Workshop 🌈♥️ ",
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe"
-    },
-    {
-        "width": 1,
-        "height": 1,
-        "createduserid": "ca86c7-4e41-8bd-1acd-66dcf8b82fe",
-        "gallery_id": "63cb-6b1-5aa-e02d-d3fada6cf4",
-        "title": "Knit Ruffle Scarf Workshop",
-        "createdby": "Tsalastudio Admin",
-        "displaydate": "January 16, 2024",
-        "createddate": "2024-01-16T06:40:19.215Z",
-        "isactive": 1,
-        "description": "Knit Ruffle Scarf Workshop!  Learn to knit this gorgeous ruffle scarf in just 3 hours, even if you are an absolute beginner!!   Date: February 3rd, 2024, Saturday  Time: 1-4 PM Fee: 1,200/- (inclusive of all materials) Venue: Tsala Studio  WhatsApp to register +91 98801 62266",
-        "imageurl": "",
-        "viewingallery": 0
     },
     {
         "imageurl": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/Tsalastudio%20Admin-ca86c7-4e41-8bd-1acd-66dcf8b82fe%2Fgallery%2F3bcde1-cba-2582-1ddb-a8b4172ab70c?alt=media&token=46257857-cb35-4a71-b506-322327c48d74",
