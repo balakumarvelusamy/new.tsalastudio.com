@@ -19,7 +19,7 @@ export default async function BlogPage(props: { searchParams?: Promise<{ q?: str
 
     // 1. Get all unique categories from blog posts
     const blogPosts = coursesData.filter((post: any) =>
-        post.posttypevalue === 'blog' && post.isactive === 1 && post.published === 1
+        post.type === 'blog' && post.isactive === 1 && post.published === 1
     );
 
     const categories = ['All', ...Array.from(new Set(blogPosts.map((post: any) => post.postcategory || 'Uncategorized').filter(Boolean)))];

@@ -19,12 +19,11 @@ export default async function CoursesPage(props: { searchParams: Promise<{ q?: s
 
     // Fetch courses from API
     const data = await getItemsByType('course');
-
     // Filter courses
     // Note: Filtering by title and content.
     // Also ensuring we only show active/published ones as per original logic.
     const filteredCourses = data.filter((course: any) => {
-        const isActive = course.isactive === 1 && course.published === 1 && course.posttypevalue === 'course';
+        const isActive = course.isactive === 1 && course.published === 1 && course.type === 'course';
         if (!isActive) return false;
 
         const matchesQuery = course.posttitle.toLowerCase().includes(query) ||
