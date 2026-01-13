@@ -100,7 +100,7 @@ const Footer = () => {
                         <h5 className="text-xl font-heading font-bold mb-6 text-white border-b border-white/10 pb-2 inline-block">Legal</h5>
                         <ul className="space-y-2 text-gray-300">
                             <li>
-                                <Link href="/terms" className="hover:text-secondary transition-colors">Terms & Conditions</Link>
+                                <Link href="/terms-conditions" className="hover:text-secondary transition-colors">Terms & Conditions</Link>
                             </li>
                         </ul>
                     </div>

@@ -39,6 +39,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
             description: strippedDesc,
             images: course.post_image ? [course.post_image] : [],
         },
+        twitter: {
+            card: 'summary_large_image',
+            title: course.posttitle,
+            description: strippedDesc,
+            images: course.post_image ? [course.post_image] : [],
+        },
     };
 }
 

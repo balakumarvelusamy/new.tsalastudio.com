@@ -23,12 +23,13 @@ interface Product {
 function findProductBySlug(slug: string): Product | undefined {
     // We expect the slug to start with the ID. 
     // Since IDs can contain hyphens, we look for the product where the slug STARTS with the ID.
-    return productsData.find((p: any) => slug.startsWith(p.p_id)) as Product | undefined;
+    return productsData.find((p: any) => slug.startsWith(String(p.p_id))) as Product | undefined;
 }
 
 // 1. Generate Metadata
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
-    const product = findProductBySlug(params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+    const { slug } = await params;
+    const product = findProductBySlug(slug);
 
     if (!product) {
         return {
@@ -45,15 +46,16 @@ export async function generateMetadata({ params }: { params: { slug: string } })
             title: product.p_name,
             description: plainDescription,
             images: [product.p_image],
-            url: `${config.domain}/shop/${params.slug}`,
+            url: `${config.domain}/shop/${slug}`,
             type: 'website',
         },
     };
 }
 
 // 2. Page Component
-export default function ProductDetailsPage({ params }: { params: { slug: string } }) {
-    const product = findProductBySlug(params.slug);
+export default async function ProductDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const product = findProductBySlug(slug);
 
     if (!product) {
         notFound();

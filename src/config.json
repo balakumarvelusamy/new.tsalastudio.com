@@ -12,27 +12,27 @@
       "title": "Upto 25% off!!",
       "prefix": "8th Anniversary Sale.",
       "description": "Offer valid on various products & Rs.1000/- off on selected courses. To Avail the offer please visit our store or WhatsApp us on +919880162266 to know more details.",
-      "image_url": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fslider%2Fofferbanner.jpeg?alt=media&token=5ef5c7f7-dee1-4ad6-92ef-8ed9728b474d"
+      "image_url": "/images/offerbanner.jpg"
     },
     {
       "title": "TSALA Quilting Studio",
       "prefix": "Bengaluru",
       "description": "Quilting | Sewing | Tailoring | Art & Craft Workshop | Longarm Services",
-      "image_url": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fslider%2Fslide1.jpg?alt=media&token=0e2cb2a5-d187-4086-ae43-52d92d417544"
+      "image_url": "/images/offerbanner.jpg"
     },
     {
       "title": "Join our Course",
       "prefix": "Bengaluru",
       "description": "Quilting | Sewing | Tailoring | Art & Craft Workshop | Longarm Services",
-      "image_url": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fslider%2Fslide2.jpg?alt=media&token=3ecce1a6-e10a-4649-bac9-cc81d3a7e882"
+      "image_url": "/images/offerbanner.jpg"
     }
   ],
   "aboutustitle": "Experience Handmade Happiness",
   "aboutus1": "Quilting | Sewing | Tailoring | Art & Craft Workshop | Longarm Services",
   "aboutus2": "Join us to learn the craft of Quilting, Stitching, Tailoring, Bag Making, Knitting, Crocheting, Hand Embroidery, Tatting and many other craft classes in Bengaluru.",
   "aboutus_aboutpage": "Set up in Dec 2015 by Vatsala Kamat, Tsala literally means F.R.I.E.N.D.S…! And thats what Tsala Studio is for, an idealistic adda located in the heart of Bengaluru for all hobby enthusiasts & quilting friends to get together!",
-  "faviconimage": "/tsala-logo.png",
-  "logo": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Flogo%2Flogo.jpeg?alt=media&token=2a0ea36d-d6b0-4ad3-8701-a4daa8dda261",
+  "faviconimage": "/logo.png",
+  "logo": "/tsala-logo.png",
   "aboutus_imageurl1": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fsiteimages%2FTsala%20Quilting%20Studio2.jpg?alt=media&token=fdcb2fda-ca34-4ffb-8a64-8d6dfb911970",
   "aboutus_imageurl2": "https://firebasestorage.googleapis.com/v0/b/tucfbclouddb.appspot.com/o/tsalastudio.com%2Fsiteimages%2FVatsala%20Kamat-0001.jpg?alt=media&token=bb74ce7e-2c7f-4074-bd11-f5d1c5a7d4d9",
   "about_ABOUTQUILTING1": "Quilting is the process of sewing three or more layers of fabric together to create bed spreads, wall hangings, bags, clothing, and a variety of accessories as per ones imagination. ",

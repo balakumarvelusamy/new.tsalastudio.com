@@ -13,7 +13,7 @@ const Header = () => {
                     <div className="flex-shrink-0 flex items-center order-1">
                         <Link href="/" className="flex items-center gap-2">
                             {config.logo ? (
-                                <img className="h-10 w-auto" src={config.logo} alt={config.title} />
+                                <img className="h-10 w-auto object-contain" src={config.logo} alt={config.title} />
                             ) : (
                                 <span className="text-2xl font-bold font-heading text-primary">Tsala Studio</span>
                             )}
@@ -26,6 +26,7 @@ const Header = () => {
                             { name: 'Home', href: '/' },
                             { name: 'About Us', href: '/about' },
                             { name: 'Courses', href: '/courses' },
+                            { name: 'Blog', href: '/blog' },
                             { name: 'Shop', href: '/shop' },
                             { name: 'Contact', href: '/contact' },
                         ].map((item) => (

@@ -9,9 +9,12 @@ import config from '../../config.json';
 
 const ITEMS_PER_PAGE = 12;
 
-export default function ShopPage({ searchParams }: { searchParams: { category?: string } }) {
+import { useSearchParams } from 'next/navigation';
+
+export default function ShopPage() {
+    const searchParamsHook = useSearchParams();
     const [searchTerm, setSearchTerm] = useState('');
-    const [selectedCategory, setSelectedCategory] = useState<string>(searchParams?.category || 'All');
+    const [selectedCategory, setSelectedCategory] = useState<string>(searchParamsHook.get('category') || 'All');
     const [currentPage, setCurrentPage] = useState(1);
     const [sortBy, setSortBy] = useState('latest'); // latest, price-asc, price-desc
     const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);

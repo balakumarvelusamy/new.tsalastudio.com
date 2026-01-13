@@ -10,7 +10,7 @@ export const metadata = {
     description: 'Join our quilting workshops, hobby classes, and more.',
 };
 
-export default async function CoursesPage(props: { searchParams?: Promise<{ q?: string; page?: string }> }) {
+export default async function CoursesPage(props: { searchParams: Promise<{ q?: string; page?: string }> }) {
     const searchParams = await props.searchParams;
     const query = searchParams?.q?.toLowerCase() || '';
     const page = Number(searchParams?.page) || 1;
@@ -20,7 +20,9 @@ export default async function CoursesPage(props: { searchParams?: Promise<{ q?: 
     // Note: Filtering by title and content.
     // Also ensuring we only show active/published ones as per original logic, 
     // although the original logic was: p.isactive === 1 && p.published === 1 && p.posttypevalue === 'course'
-    const filteredCourses = coursesData.filter((course: any) => {
+    // Check for default export in case of module resolution differences
+    const data = (coursesData as any).default || coursesData;
+    const filteredCourses = data.filter((course: any) => {
         const isActive = course.isactive === 1 && course.published === 1 && course.posttypevalue === 'course';
         if (!isActive) return false;
 
