@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { saveItem, getSecrets } from '../../../services/api';
 import { compressImage } from '../imageUtils';
+import { uploadToS3 } from '../s3Utils';
 import dynamic from 'next/dynamic';
 import AWS from 'aws-sdk';
 import config from '../../../config.json';
@@ -98,63 +99,7 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess 
         }
     };
 
-    const uploadFileToS3 = async () => {
-        if (!file || !secret) return null;
-
-        // Parse Bucket and Prefix from config.S3_BUCKET_NAME
-        // Format: "bucketname/path/to/folder/"
-        const s3ConfigString = (config as any).S3_BUCKET_NAME || 'ssndigitalmedia/tsalastudio/prod/';
-        const parts = s3ConfigString.split('/').filter(Boolean);
-        const bucketName = parts[0]; // "ssndigitalmedia"
-        const prefixPath = parts.slice(1).join('/'); // "tsalastudio/prod"
-
-        const REGION = "ap-south-1";
-
-        AWS.config.update({
-            accessKeyId: secret.s3key,
-            secretAccessKey: secret.s3secret,
-            region: REGION
-        });
-
-        const s3 = new AWS.S3({
-            params: { Bucket: bucketName },
-            region: REGION,
-        });
-
-        const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        // Filename construction
-        const filename = slugify(formData.posttitle) + "-ssndigitalmedia-" + file.name.replace(/\s+/g, "-");
-
-        // Final Key: prefix + course/ + filename  (Added 'course/' to keep things organized within prod/?)
-        // Or just prefix + filename? User sample used "home" appended to bucket constant.
-        // Assuming user wants: ssndigitalmedia/tsalastudio/prod/course/filename
-        const key = `${prefixPath}/course/${filename}`;
-
-        const params = {
-            Bucket: bucketName,
-            Key: key,
-            Body: file,
-            ACL: 'public-read'
-        };
-
-        return new Promise((resolve, reject) => {
-            s3.upload(params)
-                .on("httpUploadProgress", (evt) => {
-                    setUploadProgress("Uploading " + Math.round((evt.loaded * 100) / evt.total) + "%");
-                })
-                .send((err: any, data: any) => {
-                    if (err) {
-                        console.error("S3 Upload Error", err);
-                        reject(err);
-                    } else {
-                        // Construct URL driven by config
-                        const bucketUrl = (config as any).bucketurl || `https://${bucketName}.s3.amazonaws.com/${prefixPath}/`;
-                        const finalUrl = `${bucketUrl}course/${filename}`;
-                        resolve(finalUrl);
-                    }
-                });
-        });
-    };
+    // internal uploadFileToS3 removed, using imported utility
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -170,9 +115,15 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess 
                     return;
                 }
                 try {
-                    const uploadedUrl = await uploadFileToS3();
+                    const slugify = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                    const filename = slugify(formData.posttitle) + "-ssndigitalmedia-" + file.name.replace(/\s+/g, "-");
+
+                    setUploadProgress("Uploading 0%");
+                    // Note: uploadToS3 currently doesn't support progress callback but works for now.
+                    // We can add it to utility if needed, but for small files it's fast.
+                    const uploadedUrl = await uploadToS3(file, filename, secret, 'course');
                     if (uploadedUrl) {
-                        imageUrl = uploadedUrl as string;
+                        imageUrl = uploadedUrl;
                     }
                 } catch (uploadErr) {
                     console.error(uploadErr);
