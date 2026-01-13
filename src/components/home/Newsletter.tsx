@@ -46,7 +46,7 @@ const Newsletter = () => {
                         type="email"
                         placeholder="Enter your email"
                         {...register('email', { required: true })}
-                        className="flex-grow px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-secondary"
+                        className="flex-grow px-4 py-3 rounded-lg text-gray-900 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent"
                     />
                     <button type="submit" disabled={status === 'sending'} className="btn btn-secondary">
                         {status === 'sending' ? 'Joining...' : 'Join Us'}

@@ -107,9 +107,6 @@ export default async function CourseDetailPage({ params }: Props) {
                             </div>
 
                             <div className="mt-12 flex flex-col sm:flex-row gap-4">
-                                <Link href="/contact" className="btn btn-primary text-center">
-                                    Register Now
-                                </Link>
                                 <a
                                     href={`https://wa.me/919880162266?text=Hi, I am interested in the ${course.posttitle} course.`}
                                     target="_blank"

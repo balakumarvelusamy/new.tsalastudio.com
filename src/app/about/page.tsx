@@ -48,28 +48,33 @@ export default function AboutPage() {
 
                     {/* Offerings */}
                     <div className="mb-20">
-                        <h2 className="text-3xl font-heading font-bold text-primary mb-8 text-center">Tsala Studio Offerings</h2>
-                        <div className="bg-gray-50 rounded-xl p-8 shadow-sm border border-gray-100">
-                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {[
-                                    "Regular in-house quilting & hobby classes",
-                                    "Workshops by well known artisans and experts",
-                                    "Sales and service of Bernina & Bernette sewing machines",
-                                    "Custom orders for quilts, bags, and home decor",
-                                    "Studio rental options",
-                                    "Sales of quilt fabrics, batting, and sewing supplies"
-                                ].map((item, i) => (
-                                    <li key={i} className="flex items-start gap-3">
-                                        <span className="text-secondary mt-1">✦</span>
-                                        <span className="text-lg text-gray-700">{item}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                            <div className="mt-8 text-center">
-                                <Link href="/services" className="btn btn-primary">
-                                    View All Hobby Classes
+                        <h2 className="text-3xl font-heading font-bold text-primary mb-12 text-center">Tsala Studio Offerings</h2>
+                        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 place-items-center">
+                            {[
+                                { title: "Hobby Classes", link: "/courses", icon: "🎨" },
+                                { title: "Workshops", link: "/courses", icon: "👥" },
+                                { title: "Sewing Machines", link: "/shop", icon: "🧵" },
+                                { title: "Custom Orders", link: "/contact", icon: "✨" },
+                                { title: "Studio Rental", link: "/contact", icon: "🏠" },
+                                { title: "Quilt Supplies", link: "/shop", icon: "✂️" }
+                            ].map((item, i) => (
+                                <Link
+                                    href={item.link}
+                                    key={i}
+                                    className="flex flex-col items-center justify-center w-36 h-36 md:w-64 md:h-64 rounded-full bg-white border-2 border-primary/10 shadow-lg hover:shadow-xl hover:scale-105 hover:border-secondary/30 transition-all duration-300 p-4 md:p-6 text-center group relative overflow-hidden"
+                                >
+                                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                                    <div className="relative z-10">
+                                        <span className="text-2xl md:text-4xl mb-1 md:mb-3 block text-secondary group-hover:-translate-y-1 transition-transform duration-300">{item.icon}</span>
+                                        <h3 className="text-sm md:text-xl font-bold text-primary leading-tight group-hover:text-secondary transition-colors">{item.title}</h3>
+                                    </div>
                                 </Link>
-                            </div>
+                            ))}
+                        </div>
+                        <div className="mt-12 text-center">
+                            <Link href="/courses" className="btn btn-primary rounded-full px-8">
+                                View All Hobby Classes
+                            </Link>
                         </div>
                     </div>
 

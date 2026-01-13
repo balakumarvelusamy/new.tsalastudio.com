@@ -18,27 +18,30 @@ const CategoryGrid = ({ categories }: { categories: Category[] }) => {
                     <div className="h-1 w-20 bg-secondary mx-auto"></div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="flex flex-wrap justify-center gap-4 md:gap-8">
                     {categories.map((cat, index) => (
-                        <div key={index} className="group relative overflow-hidden rounded-xl shadow-md hover:shadow-xl transition-all duration-300 h-96">
+                        <div key={index} className="group relative overflow-hidden rounded-full shadow-md hover:shadow-xl transition-all duration-300 w-36 h-36 md:w-72 md:h-72 flex-shrink-0">
                             <div
                                 className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-110"
                                 style={{ backgroundImage: `url(${cat.imageurl})` }}
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-black/30 group-hover:bg-black/50 transition-colors duration-300" />
 
-                            <div className="absolute bottom-0 left-0 right-0 p-6 text-center text-white transform translate-y-4 group-hover:translate-y-0 transition-transform">
-                                <h3 className="text-xl font-bold mb-2 text-white">{cat.title}</h3>
-                                <p className="text-sm text-gray-200 mb-4 opacity-0 group-hover:opacity-100 transition-opacity delay-100">{cat.subtitle}</p>
-                                {cat.category.toLowerCase() === 'course' ? (
-                                    <Link href="/courses" className="inline-block px-4 py-2 bg-secondary text-white text-sm font-semibold rounded hover:bg-secondary-light transition-colors">
-                                        View Courses
-                                    </Link>
-                                ) : (
-                                    <Link href={`/shop?category=${cat.category}`} className="inline-block px-4 py-2 bg-white text-primary text-sm font-semibold rounded hover:bg-gray-100 transition-colors">
-                                        Shop {cat.category}
-                                    </Link>
-                                )}
+                            <div className="absolute inset-0 flex flex-col items-center justify-center p-2 md:p-6 text-center text-white">
+                                <h3 className="text-xs md:text-xl font-bold mb-1 md:mb-2 text-white leading-tight">{cat.title}</h3>
+                                <p className="text-[10px] md:text-sm text-gray-100 mb-1 md:mb-4 text-shadow hidden md:block">{cat.subtitle}</p>
+
+                                <div>
+                                    {cat.category.toLowerCase() === 'course' ? (
+                                        <Link href="/courses" className="inline-block px-2 py-1 md:px-5 md:py-2 bg-secondary text-white text-[10px] md:text-xs font-bold uppercase tracking-wider rounded-full hover:bg-white hover:text-secondary transition-colors shadow-lg">
+                                            View Courses
+                                        </Link>
+                                    ) : (
+                                        <Link href={`/shop?category=${cat.category}`} className="inline-block px-2 py-1 md:px-5 md:py-2 bg-white text-primary text-[10px] md:text-xs font-bold uppercase tracking-wider rounded-full hover:bg-secondary hover:text-white transition-colors shadow-lg">
+                                            Shop Now
+                                        </Link>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     ))}
