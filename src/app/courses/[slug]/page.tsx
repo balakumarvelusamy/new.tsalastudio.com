@@ -1,8 +1,9 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import coursesData from '../../../data/courses.json';
+// import coursesData from '../../../data/courses.json'; // Removed
 import config from '../../../config.json';
+import { getItemsByType } from '../../../services/api';
 import { Metadata } from 'next';
 import BlurImage from '../../../components/Element/BlurImage';
 
@@ -10,9 +11,15 @@ type Props = {
     params: Promise<{ slug: string }>;
 };
 
-// Data Helper
+// Data Helper - Fetches all and finds one
 async function getCourse(slug: string) {
-    return coursesData.find((c: any) => c.slug === slug);
+    const courses = await getItemsByType('course');
+    return courses.find((c: any) => c.slug === slug);
+}
+
+// Data Helper - Fetches all for related
+async function getAllCourses() {
+    return await getItemsByType('course');
 }
 
 // Dynamic SEO
@@ -156,7 +163,7 @@ export default async function CourseDetailPage({ params }: Props) {
                 <div className="container-custom">
                     <h2 className="text-3xl font-heading font-bold text-center mb-12">Explore More Courses</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {coursesData
+                        {(await getAllCourses())
                             .filter((c: any) => c.slug !== course.slug && c.isactive === 1 && c.published === 1 && c.posttypevalue === 'course')
                             .slice(0, 3)
                             .map((relCourse: any) => (

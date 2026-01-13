@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import coursesData from '../../data/courses.json';
+// import coursesData from '../../data/courses.json'; // Removed
 import config from '../../config.json';
+import { getItemsByType } from '../../services/api';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import BlurImage from '../../components/Element/BlurImage';
 
@@ -16,12 +17,12 @@ export default async function CoursesPage(props: { searchParams: Promise<{ q?: s
     const page = Number(searchParams?.page) || 1;
     const ITEMS_PER_PAGE = 9;
 
+    // Fetch courses from API
+    const data = await getItemsByType('course');
+
     // Filter courses
     // Note: Filtering by title and content.
-    // Also ensuring we only show active/published ones as per original logic, 
-    // although the original logic was: p.isactive === 1 && p.published === 1 && p.posttypevalue === 'course'
-    // Check for default export in case of module resolution differences
-    const data = (coursesData as any).default || coursesData;
+    // Also ensuring we only show active/published ones as per original logic.
     const filteredCourses = data.filter((course: any) => {
         const isActive = course.isactive === 1 && course.published === 1 && course.posttypevalue === 'course';
         if (!isActive) return false;

@@ -1,8 +1,6 @@
 {
   "domain": "tsalastudio.com",
   "storage": "tsalastudio.com",
-  "service_url": "https://asia-south1-tucfbclouddb.cloudfunctions.net/tuc_shop_node_api/api/",
-  "admin_url": "https://www.theuniquecreations.com/login/",
   "email_service_url": "https://asia-south1-tucfbclouddb.cloudfunctions.net/tuc_shop_node_api/email/",
   "============================": "==========================",
   "service_url_dev": "https://ldnji2rlcc.execute-api.us-east-1.amazonaws.com/",
@@ -61,6 +59,8 @@
   "title": "TSALA Quilting Studio",
   "description": "Quilting | Sewing | Tailoring | Art & Craft Workshop | Longarm Services",
   "razorpaylink": "https://pages.razorpay.com/tsalastudio",
+  "S3_BUCKET_NAME": "ssndigitalmedia/tsalastudio/prod/",
+  "bucketurl": "https://ssndigitalmedia.s3.ap-south-1.amazonaws.com/tsalastudio/prod/",
   "tc1": "<b>Return & Refund policy: </b><br/>You can request to return purchased product within 7 days from the date of delivery, that are in unaltered and free of damage by the customer. Items cannot be returned or exchanged after 7 days from the date of delivery. Items must be returned with all the GREATS tags still attached and must be in their original package.",
   "tc2": "<b>Shipping Policy:</b><br/><span>Shipping charges/ Delivery charges will be applicable on products and will be notified while processing the order.</span> <ul style='list-style-type:none;'><li>- The order will be dispatched within 10 business days depending upon the order. We don't deliver on Public & National holidays.</li> <li>- Any change in the address has to be notified within 2 days of placing the order.</li> <li>- The orders will be shipped via IndiaPost.</li></ul>",
   "tc3": "<b>Privacy Policy: </b><br/> At Tsala, we value your privacy and security while browsing and shopping at our website. We guarantee that the information shared by you will not be misused. We may collect the contact information including the important dates/ email address/ demographic information such as pincode, preferences for our betterment.",
