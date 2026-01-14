@@ -8,12 +8,6 @@
   "service_url_prod": "https://ldnji2rlcc.execute-api.us-east-1.amazonaws.com/",
   "slider": [
     {
-      "title": "Upto 25% off!!",
-      "prefix": "8th Anniversary Sale.",
-      "description": "Offer valid on various products & Rs.1000/- off on selected courses. To Avail the offer please visit our store or WhatsApp us on +919880162266 to know more details.",
-      "image_url": "/images/offerbanner.jpg"
-    },
-    {
       "title": "TSALA Quilting Studio",
       "prefix": "Bengaluru",
       "description": "Quilting | Sewing | Tailoring | Art & Craft Workshop | Longarm Services",
