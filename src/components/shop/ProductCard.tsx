@@ -19,7 +19,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
     return (
         <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-md flex flex-col h-full group">
-            <Link href={`/shop/${product.p_id}-${slug}`} className="relative aspect-square overflow-hidden bg-gray-100 block">
+            <Link href={`/shop/${slug}`} className="relative aspect-square overflow-hidden bg-gray-100 block">
                 {product.p_image ? (
                     <img
                         src={product.p_image}

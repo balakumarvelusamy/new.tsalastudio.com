@@ -157,9 +157,14 @@ export default function ProductForm({ initialData, isEditMode = false, onSuccess
 
     const quillModules = {
         toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            ['bold', 'italic', 'underline', 'strike'],        // toggles
+            ['blockquote', 'code-block'],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
+            [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+            [{ 'align': [] }],
+            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
             ['link', 'clean']
         ],
     };

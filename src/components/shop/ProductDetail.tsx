@@ -48,7 +48,7 @@ const ProductDetail = ({ product, reviews, relatedProducts }: { product: Product
                 id: crypto.randomUUID(),
             };
 
-            const res = await fetch(`${config.service_url}addCart`, {
+            const res = await fetch(`${config.service_url_prod}/addCart`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ data: payload })
