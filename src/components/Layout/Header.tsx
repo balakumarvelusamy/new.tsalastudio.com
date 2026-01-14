@@ -1,12 +1,13 @@
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import config from '../../config.json';
-import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'; // Assuming heroicons is available or will install, else I'll use text/svg
-// Using inline SVG for now to avoid dependency issues if heroicons not installed
-// Update: Package.json didn't show heroicons. I'll use simple SVGs.
+import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { useCart } from '../../context/CartContext';
 
 const Header = () => {
     const pathname = usePathname();
+    const { cartCount } = useCart();
+
     return (
         <header className="sticky top-0 z-50 bg-black text-white border-b border-gray-800 shadow-sm">
             <div className="container mx-auto px-4 lg:px-12 max-w-[1440px]">
@@ -49,9 +50,16 @@ const Header = () => {
                     <div className="order-2 md:order-3 flex items-center space-x-4">
                         <Link href="/shop/cart" className="p-2 text-white hover:text-primary relative group">
                             <span className="sr-only">Cart</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
-                            </svg>
+                            <div className="relative">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />
+                                </svg>
+                                {cartCount > 0 && (
+                                    <span className="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center">
+                                        {cartCount}
+                                    </span>
+                                )}
+                            </div>
                         </Link>
                         <Link href="/login" className="p-2 text-white hover:text-primary">
                             <span className="sr-only">Login</span>
