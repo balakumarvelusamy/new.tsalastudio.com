@@ -22,6 +22,7 @@
     "react-quill-new": "^3.7.0"
   },
   "devDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.1.18",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
