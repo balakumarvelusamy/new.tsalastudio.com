@@ -86,3 +86,64 @@
     @apply text-2xl md:text-3xl;
   }
 }
+
+/* Quill Editor Alignment Support */
+.ql-align-center {
+  text-align: center;
+}
+
+.ql-align-right {
+  text-align: right;
+}
+
+.ql-align-justify {
+  text-align: justify;
+}
+
+/* Rich Text Content Fixes */
+.prose {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.prose img,
+.prose video,
+.prose iframe {
+  max-width: 100%;
+  height: auto;
+}
+
+.prose pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  max-width: 100%;
+}
+
+.prose blockquote {
+  border-left: 4px solid #e5e7eb;
+  padding-left: 1rem;
+  font-style: italic;
+}
+
+.prose ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.prose ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4 {
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  line-height: applied;
+}
+
+.prose p {
+  margin-bottom: 1em;
+}

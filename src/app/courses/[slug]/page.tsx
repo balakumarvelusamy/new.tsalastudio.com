@@ -146,8 +146,8 @@ export default async function CourseDetailPage({ params }: Props) {
                                     </li>
                                     <li className="flex flex-col">
                                         <span className="font-bold text-gray-800 uppercase text-xs mb-1">Status</span>
-                                        <span className={`font-bold ${course.isactive ? 'text-green-600' : 'text-red-600'}`}>
-                                            {course.isactive ? 'Open for Registration' : 'Closed'}
+                                        <span className={`font-bold ${course.isregistrationopen === 1 ? 'text-green-600' : 'text-red-600'}`}>
+                                            {course.isregistrationopen === 1 ? 'Open for Registration' : 'Closed'}
                                         </span>
                                     </li>
                                 </ul>

@@ -2,7 +2,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import coursesData from '../../../data/courses.json';
+// import coursesData from '../../../data/courses.json'; // Removed
+import { getItemsByType } from '../../../services/api';
 import { Metadata } from 'next';
 import config from '../../../config.json';
 import BlurImage from '../../../components/Element/BlurImage';
@@ -11,13 +12,10 @@ type Props = {
     params: Promise<{ slug: string }>;
 };
 
-// Helper to get post by ID
+// Helper to get post by slug
 async function getPost(slug: string) {
-    // The slug passed here is strictly the post_id
-    const post = coursesData.find((p: any) =>
-        p.posttypevalue === 'blog' && p.slug === slug
-    );
-    return post;
+    const blogs = await getItemsByType('blog');
+    return Array.isArray(blogs) ? blogs.find((c: any) => c.slug === slug) : null;
 }
 
 // Dynamic SEO

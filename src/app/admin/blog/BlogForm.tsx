@@ -13,16 +13,16 @@ import config from '../../../config.json';
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 import 'react-quill-new/dist/quill.snow.css';
 
-interface CourseFormProps {
+interface BlogFormProps {
     initialData?: any;
     isEditMode?: boolean;
     onSuccess?: () => void;
     onCancel?: () => void;
 }
 
-const CATEGORIES = ["Hand Embroidery", "Quilting", "Sewing", "Others"];
+const CATEGORIES = ["General", "News", "Tutorials", "Events"];
 
-export default function CourseForm({ initialData, isEditMode = false, onSuccess, onCancel }: CourseFormProps) {
+export default function BlogForm({ initialData, isEditMode = false, onSuccess, onCancel }: BlogFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [secret, setSecret] = useState<any>(null);
@@ -32,14 +32,13 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
     const [formData, setFormData] = useState({
         posttitle: initialData?.posttitle || '',
         slug: initialData?.slug || '',
-        postcategory: initialData?.postcategory || 'Course',
+        postcategory: initialData?.postcategory || 'General',
         post_image: initialData?.post_image || '',
         postcontent: initialData?.postcontent || '',
         isactive: initialData?.isactive ?? 1,
         published: initialData?.published ?? 1,
-        isregistrationopen: initialData?.isregistrationopen ?? 0,
         // Hidden/System fields
-        type: 'course',
+        type: 'blog',
         id: initialData?.id || initialData?.post_id || crypto.randomUUID(),
         createdby: initialData?.createdby || 'Admin',
         createddate: initialData?.createddate || new Date().toISOString(),
@@ -79,7 +78,7 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
         setFormData(prev => ({ ...prev, postcontent: content }));
     };
 
-    const handleToggle = (field: 'isactive' | 'published' | 'isregistrationopen') => {
+    const handleToggle = (field: 'isactive' | 'published') => {
         setFormData(prev => ({ ...prev, [field]: prev[field] === 1 ? 0 : 1 }));
     };
 
@@ -101,8 +100,6 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
         }
     };
 
-    // internal uploadFileToS3 removed, using imported utility
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -121,9 +118,7 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
                     const filename = slugify(formData.posttitle) + "-ssndigitalmedia-" + file.name.replace(/\s+/g, "-");
 
                     setUploadProgress("Uploading 0%");
-                    // Note: uploadToS3 currently doesn't support progress callback but works for now.
-                    // We can add it to utility if needed, but for small files it's fast.
-                    const uploadedUrl = await uploadToS3(file, filename, secret, 'course');
+                    const uploadedUrl = await uploadToS3(file, filename, secret, 'blog');
                     if (uploadedUrl) {
                         imageUrl = uploadedUrl;
                     }
@@ -146,13 +141,13 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
             if (onSuccess) {
                 onSuccess();
             } else {
-                alert('Course saved successfully!');
-                router.push('/admin/course');
+                alert('Blog saved successfully!');
+                router.push('/admin/blog');
                 router.refresh();
             }
         } catch (err) {
             console.error(err);
-            alert('Failed to save course. Please try again.');
+            alert('Failed to save blog. Please try again.');
         } finally {
             setLoading(false);
         }
@@ -171,14 +166,14 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-6 max-w-4xl mx-auto">
             {/* Header */}
             <div className="border-b border-gray-100 pb-4 mb-4">
-                <h2 className="text-xl font-bold text-gray-800">{isEditMode ? 'Edit Course' : 'Create New Course'}</h2>
+                <h2 className="text-xl font-bold text-gray-800">{isEditMode ? 'Edit Blog' : 'Create New Blog'}</h2>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
                 {/* Title */}
                 <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Course Title</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Blog Title</label>
                     <input
                         type="text"
                         name="posttitle"
@@ -186,7 +181,7 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
                         onChange={handleChange}
                         required
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
-                        placeholder="e.g. Advanced Quilting Techniques"
+                        placeholder="e.g. New Workshop Announcement"
                     />
                 </div>
 
@@ -220,7 +215,7 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
 
                 {/* Image Upload */}
                 <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Course Image</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Blog Image</label>
                     <div className="space-y-4">
                         {formData.post_image && (
                             <div className="flex items-center gap-4 p-2 bg-gray-50 rounded-lg border border-gray-100">
@@ -275,13 +270,6 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
                         </div>
                         <span className="text-sm font-medium text-gray-700">Published</span>
                     </label>
-
-                    <label className="flex items-center gap-3 cursor-pointer">
-                        <div className={`w-12 h-6 rounded-full p-1 transition-colors ${formData.isregistrationopen === 1 ? 'bg-purple-500' : 'bg-gray-300'}`} onClick={() => handleToggle('isregistrationopen')}>
-                            <div className={`w-4 h-4 rounded-full bg-white shadow-sm transform transition-transform ${formData.isregistrationopen === 1 ? 'translate-x-6' : 'translate-x-0'}`} />
-                        </div>
-                        <span className="text-sm font-medium text-gray-700">Registration Open</span>
-                    </label>
                 </div>
             </div>
 
@@ -299,7 +287,7 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
                     disabled={loading}
                     className={`px-6 py-2 rounded-lg text-white bg-primary hover:bg-primary/90 transition-colors font-medium shadow-sm ${loading ? 'opacity-70 cursor-wait' : ''}`}
                 >
-                    {loading ? (uploadProgress ? 'Uploading...' : 'Saving...') : 'Save Course'}
+                    {loading ? (uploadProgress ? 'Uploading...' : 'Saving...') : 'Save Blog'}
                 </button>
             </div>
         </form>
