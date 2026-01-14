@@ -34,7 +34,7 @@ async function getCategories() {
     {
       title: "Workshops",
       subtitle: "Learn New Skills",
-      imageurl: config.slider[2].image_url,
+      imageurl: config.slider[1].image_url,
       category: "course",
       type: "Course"
     }

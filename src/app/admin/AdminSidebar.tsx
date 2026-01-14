@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bars3Icon, XMarkIcon, HomeIcon, BookOpenIcon, DocumentTextIcon, ArrowPathIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'; // Add icons as needed
+import { Bars3Icon, XMarkIcon, HomeIcon, BookOpenIcon, DocumentTextIcon, ArrowPathIcon, ShoppingBagIcon, PhotoIcon } from '@heroicons/react/24/outline'; // Add icons as needed
 
 export default function AdminSidebar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -11,6 +11,7 @@ export default function AdminSidebar() {
 
     const menuItems = [
         { name: 'Dashboard', href: '/admin', icon: HomeIcon },
+        { name: 'Slider', href: '/admin/slider', icon: PhotoIcon },
         { name: 'Courses', href: '/admin/course', icon: BookOpenIcon },
         { name: 'Products', href: '/admin/product', icon: ShoppingBagIcon },
         //{ name: 'Migration', href: '/admin/migrate', icon: ArrowPathIcon },
