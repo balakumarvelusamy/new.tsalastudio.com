@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Bars3Icon, XMarkIcon, HomeIcon, BookOpenIcon, ArrowPathIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'; // Add icons as needed
+import { Bars3Icon, XMarkIcon, HomeIcon, BookOpenIcon, DocumentTextIcon, ArrowPathIcon, ShoppingBagIcon } from '@heroicons/react/24/outline'; // Add icons as needed
 
 export default function AdminSidebar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -13,8 +13,8 @@ export default function AdminSidebar() {
         { name: 'Dashboard', href: '/admin', icon: HomeIcon },
         { name: 'Courses', href: '/admin/course', icon: BookOpenIcon },
         { name: 'Products', href: '/admin/product', icon: ShoppingBagIcon },
-        { name: 'Migration', href: '/admin/migrate', icon: ArrowPathIcon },
-        // { name: 'Blog', href: '/admin/blog', icon: DocumentTextIcon }, // Commented out for now
+        //{ name: 'Migration', href: '/admin/migrate', icon: ArrowPathIcon },
+        { name: 'Blog', href: '/admin/blog', icon: DocumentTextIcon },
     ];
 
     const toggleSidebar = () => setIsOpen(!isOpen);

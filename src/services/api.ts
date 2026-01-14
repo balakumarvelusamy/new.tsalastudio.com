@@ -85,3 +85,26 @@ export const getSecrets = async () => {
         throw err;
     }
 };
+
+export const getItemBySlug = async (slug: string) => {
+    try {
+        console.log(`Fetching item by slug: ${slug}`);
+        // Ensure API_BASE_URL handles trailing slash correctly as defined at top of file
+        const url = `${API_BASE_URL}items/${slug}`;
+
+        const response = await fetch(url, {
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            console.warn(`Failed to fetch item by slug ${slug}: ${response.status} ${response.statusText}`);
+            return null;
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (err) {
+        console.error("Error getting item by slug:", err);
+        return null;
+    }
+};

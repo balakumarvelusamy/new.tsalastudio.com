@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import coursesData from '../../data/courses.json';
+import { getItemsByType } from '../../services/api';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import BlurImage from '../../components/Element/BlurImage';
 
@@ -18,9 +18,11 @@ export default async function BlogPage(props: { searchParams?: Promise<{ q?: str
     const ITEMS_PER_PAGE = 9;
 
     // 1. Get all unique categories from blog posts
-    const blogPosts = coursesData.filter((post: any) =>
-        post.type === 'blog' && post.isactive === 1 && post.published === 1
-    );
+    // Fetch active blog posts from API
+    const allBlogs = await getItemsByType('blog');
+    const blogPosts = Array.isArray(allBlogs) ? allBlogs.filter((post: any) =>
+        post.isactive === 1 && post.published === 1
+    ) : [];
 
     const categories = ['All', ...Array.from(new Set(blogPosts.map((post: any) => post.postcategory || 'Uncategorized').filter(Boolean)))];
 

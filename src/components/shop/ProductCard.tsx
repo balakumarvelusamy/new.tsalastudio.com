@@ -19,7 +19,7 @@ const ProductCard = ({ product }: { product: Product }) => {
 
     return (
         <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-md flex flex-col h-full group">
-            <Link href={`/shop/${product.p_id}-${slug}`} className="relative aspect-square overflow-hidden bg-gray-100 block">
+            <Link href={`/shop/${slug}`} className="relative aspect-square overflow-hidden bg-gray-100 block">
                 {product.p_image ? (
                     <img
                         src={product.p_image}
@@ -43,7 +43,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                 <div className="mb-1">
                     <span className="text-[10px] text-gray-400 uppercase tracking-wider block mb-0.5">{product.p_category}</span>
                     <h3 className="text-sm font-semibold text-gray-900 leading-tight line-clamp-2 min-h-[36px] hover:text-secondary transition-colors">
-                        <Link href={`/shop/${product.p_id}-${slug}`}>
+                        <Link href={`/shop/${slug}`}>
                             {product.p_name}
                         </Link>
                     </h3>

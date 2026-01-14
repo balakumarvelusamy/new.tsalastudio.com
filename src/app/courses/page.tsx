@@ -29,6 +29,16 @@ export default async function CoursesPage(props: { searchParams: Promise<{ q?: s
         const matchesQuery = course.posttitle.toLowerCase().includes(query) ||
             (course.postcontent && course.postcontent.toLowerCase().includes(query));
         return matchesQuery;
+    }).sort((a: any, b: any) => {
+        // 1. Sort by Registration Open status (1 comes before 0/undefined)
+        const regA = a.isregistrationopen === 1 ? 1 : 0;
+        const regB = b.isregistrationopen === 1 ? 1 : 0;
+        if (regA !== regB) return regB - regA; // Open first
+
+        // 2. Sort by Created Date (Latest first)
+        const dateA = new Date(a.createddate || 0).getTime();
+        const dateB = new Date(b.createddate || 0).getTime();
+        return dateB - dateA;
     });
 
     const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
@@ -103,6 +113,12 @@ export default async function CoursesPage(props: { searchParams: Promise<{ q?: s
                                                 {course.postsubcategory}
                                             </span>
                                         )}
+                                        <div className={`absolute top-4 right-4 z-20 px-3 py-1 rounded-full text-xs font-bold uppercase shadow-sm ${course.isregistrationopen === 1
+                                            ? 'bg-green-500 text-white'
+                                            : 'bg-red-500 text-white'
+                                            }`}>
+                                            {course.isregistrationopen === 1 ? 'Open for Registration' : 'Closed'}
+                                        </div>
                                     </div>
                                     <div className="p-6 flex-1 flex flex-col">
                                         <h3 className="text-xl font-bold font-heading mb-3 group-hover:text-primary transition-colors">

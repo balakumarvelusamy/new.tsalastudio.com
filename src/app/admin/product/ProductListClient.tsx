@@ -264,6 +264,7 @@ export default function ProductListClient({ initialProducts }: { initialProducts
                                 initialData={editingProduct || undefined}
                                 isEditMode={!!editingProduct}
                                 onSuccess={handleFormSuccess}
+                                onCancel={closeModal}
                             />
                         </div>
                     </div>

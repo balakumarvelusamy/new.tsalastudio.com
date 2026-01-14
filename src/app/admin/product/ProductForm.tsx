@@ -15,11 +15,12 @@ interface ProductFormProps {
     initialData?: any;
     isEditMode?: boolean;
     onSuccess?: () => void;
+    onCancel?: () => void;
 }
 
 const CATEGORIES = ["Fabrics", "Kits", "Patterns", "Notions", "Others"];
 
-export default function ProductForm({ initialData, isEditMode = false, onSuccess }: ProductFormProps) {
+export default function ProductForm({ initialData, isEditMode = false, onSuccess, onCancel }: ProductFormProps) {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [secret, setSecret] = useState<any>(null);
@@ -156,9 +157,14 @@ export default function ProductForm({ initialData, isEditMode = false, onSuccess
 
     const quillModules = {
         toolbar: [
-            [{ 'header': [1, 2, 3, false] }],
-            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            ['bold', 'italic', 'underline', 'strike'],        // toggles
+            ['blockquote', 'code-block'],
             [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+            [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript
+            [{ 'indent': '-1' }, { 'indent': '+1' }],          // outdent/indent
+            [{ 'align': [] }],
+            [{ 'color': [] }, { 'background': [] }],          // dropdown with defaults from theme
             ['link', 'clean']
         ],
     };
@@ -324,7 +330,7 @@ export default function ProductForm({ initialData, isEditMode = false, onSuccess
             <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <button
                     type="button"
-                    onClick={() => router.back()}
+                    onClick={() => onCancel ? onCancel() : router.back()}
                     className="px-6 py-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors font-medium"
                 >
                     Cancel

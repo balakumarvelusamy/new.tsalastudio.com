@@ -8,6 +8,12 @@
     "start": "next start",
     "lint": "eslint"
   },
+  "overrides": {
+    "react-quill": {
+      "react": "$react",
+      "react-dom": "$react-dom"
+    }
+  },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
     "aws-sdk": "^2.1693.0",
