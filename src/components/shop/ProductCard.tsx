@@ -1,8 +1,11 @@
+'use client';
 
+import React from 'react';
 import Link from 'next/link';
+import { useCart } from '../../context/CartContext';
 
 interface Product {
-    p_id: string;
+    id: string;
     p_name: string;
     p_price: string;
     p_actual_price: string;
@@ -11,11 +14,17 @@ interface Product {
 }
 
 const ProductCard = ({ product }: { product: Product }) => {
+    const { addToCart } = useCart();
     // Helper to generate SEO friendly slug
     const slug = product.p_name
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/(^-|-$)+/g, '');
+        ? product.p_name
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, '-')
+            .replace(/(^-|-$)+/g, '')
+        : 'product';
+
+    const [isAdded, setIsAdded] = React.useState(false);
+    const [feedbackText, setFeedbackText] = React.useState('Added to Cart');
 
     return (
         <div className="bg-white rounded-lg overflow-hidden shadow-sm border border-gray-100 transition-all hover:shadow-md flex flex-col h-full group">
@@ -57,15 +66,30 @@ const ProductCard = ({ product }: { product: Product }) => {
                         )}
                     </div>
 
-                    <a
-                        href={`https://wa.me/919880162266?text=Hi, I am interested in ${product.p_name}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="btn btn-primary text-xs px-3 py-1.5 rounded h-8 flex items-center justify-center whitespace-nowrap"
+                    <button
+                        onClick={(e) => {
+                            e.preventDefault();
+                            const result = addToCart({
+                                id: product.id,
+                                name: product.p_name,
+                                image: product.p_image,
+                                price: Number(product.p_price),
+                                quantity: 1
+                            });
+
+                            setFeedbackText(result === 'updated' ? 'Quantity Updated' : 'Added to Cart');
+                            setIsAdded(true);
+                            setTimeout(() => setIsAdded(false), 5000);
+                        }}
+                        className={`text-xs px-3 py-1.5 rounded h-8 flex items-center justify-center whitespace-nowrap transition-colors ${isAdded
+                            ? 'bg-green-600 text-white cursor-default'
+                            : 'btn btn-primary'
+                            }`}
                         title="Add to Cart"
+                        disabled={isAdded}
                     >
-                        Add to Cart
-                    </a>
+                        {isAdded ? feedbackText : 'Add to Cart'}
+                    </button>
                 </div>
             </div>
         </div>

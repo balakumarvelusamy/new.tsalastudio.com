@@ -4,9 +4,11 @@ import config from '../../config.json';
 import { useRouter } from 'next/navigation';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { StarIcon as StarIconOutline } from '@heroicons/react/24/outline';
+import { useCart } from '../../context/CartContext';
 
 interface Product {
-    p_id: string;
+    id: string;
+    p_id?: string;
     p_name: string;
     p_image: string;
     p_price: number | string;
@@ -23,44 +25,60 @@ interface Review {
 }
 
 const ProductDetail = ({ product, reviews, relatedProducts }: { product: Product, reviews: Review[], relatedProducts: any[] }) => {
+    const [isAdded, setIsAdded] = useState(false);
+    const [feedbackText, setFeedbackText] = useState('Added to Cart');
     const [activeImage, setActiveImage] = useState(product.p_image);
     const [activeTab, setActiveTab] = useState<'description' | 'reviews'>('description');
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
+    const { addToCart: addToContextCart } = useCart();
+
     const addToCart = async () => {
+        // Always add to local context first for immediate UI feedback
+        const result = addToContextCart({
+            id: product.id || product.p_id || '', // Fallback to p_id if id is missing
+            name: product.p_name,
+            image: product.p_image,
+            price: Number(product.p_price),
+            quantity: 1
+        });
+
+        setFeedbackText(result === 'updated' ? 'Quantity Updated' : 'Added to Cart');
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 5000);
+
         const userId = localStorage.getItem('uuid');
-        if (!userId) {
-            router.push('/shop-login');
-            return;
-        }
 
-        setLoading(true);
-        try {
-            const payload = {
-                userid: userId,
-                createddate: new Date(),
-                isactive: '1',
-                p_id: product.p_id,
-                p_quantity: 1,
-                updateddate: new Date(),
-                p_price: product.p_price,
-                id: crypto.randomUUID(),
-            };
+        // If logged in, also sync with backend
+        if (userId) {
+            setLoading(true);
+            try {
+                const payload = {
+                    userid: userId,
+                    createddate: new Date(),
+                    isactive: '1',
+                    p_id: product.p_id || product.id, // Ensure we send an ID
+                    p_quantity: 1,
+                    updateddate: new Date(),
+                    p_price: product.p_price,
+                    id: crypto.randomUUID(),
+                };
 
-            const res = await fetch(`${config.service_url_prod}/addCart`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ data: payload })
-            });
-            if (res.ok) {
-                alert("Added to Cart!");
-                window.dispatchEvent(new Event('cartUpdated'));
+                const res = await fetch(`${config.service_url_prod}/addCart`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: payload })
+                });
+
+                if (res.ok) {
+                    // window.dispatchEvent(new Event('cartUpdated')); // No longer needed as context handles it
+                }
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoading(false);
             }
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
         }
     };
 
@@ -102,10 +120,13 @@ const ProductDetail = ({ product, reviews, relatedProducts }: { product: Product
 
                     <button
                         onClick={addToCart}
-                        disabled={loading}
-                        className="btn btn-primary w-full md:w-auto"
+                        disabled={loading || isAdded}
+                        className={`btn w-full md:w-auto transition-all ${isAdded
+                            ? 'bg-green-600 border-green-600 text-white cursor-default hover:bg-green-600 hover:border-green-600'
+                            : 'btn-primary'
+                            }`}
                     >
-                        {loading ? 'Adding...' : 'Add to Cart'}
+                        {loading ? 'Adding...' : isAdded ? feedbackText : 'Add to Cart'}
                     </button>
 
                     <div className="border-t pt-6 text-sm text-gray-500 space-y-2">

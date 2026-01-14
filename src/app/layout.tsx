@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import SiteLayoutClient from "@/components/Layout/SiteLayoutClient";
 import config from "../config.json";
 import "./globals.css";
+import { CartProvider } from "../context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -61,7 +62,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen font-sans`}
       >
-        <SiteLayoutClient>{children}</SiteLayoutClient>
+        <CartProvider>
+          <SiteLayoutClient>{children}</SiteLayoutClient>
+        </CartProvider>
       </body>
     </html>
   );
