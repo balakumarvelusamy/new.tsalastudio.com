@@ -1,3 +1,4 @@
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import config from '../../config.json';
 import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'; // Assuming heroicons is available or will install, else I'll use text/svg
@@ -5,6 +6,7 @@ import { ShoppingCartIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/rea
 // Update: Package.json didn't show heroicons. I'll use simple SVGs.
 
 const Header = () => {
+    const pathname = usePathname();
     return (
         <header className="sticky top-0 z-50 bg-black text-white border-b border-gray-800 shadow-sm">
             <div className="container mx-auto px-4 lg:px-12 max-w-[1440px]">
@@ -33,7 +35,10 @@ const Header = () => {
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className="text-sm font-medium text-white hover:text-primary transition-colors"
+                                className={`text-sm font-medium transition-colors ${pathname === item.href
+                                    ? 'text-primary border-b-2 border-primary'
+                                    : 'text-white hover:text-primary'
+                                    }`}
                             >
                                 {item.name}
                             </Link>
