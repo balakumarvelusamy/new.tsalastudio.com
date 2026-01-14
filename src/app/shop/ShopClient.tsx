@@ -197,32 +197,74 @@ export default function ShopClient({ products }: ShopClientProps) {
 
                         {/* Pagination */}
                         {totalPages > 1 && (
-                            <div className="mt-12 flex justify-center gap-2">
+                            <div className="mt-12 flex justify-center items-center gap-2 flex-wrap">
+                                {/* First Page */}
+                                <button
+                                    onClick={() => setCurrentPage(1)}
+                                    disabled={currentPage === 1}
+                                    className="p-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-gray-600"
+                                    title="First Page"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" /></svg>
+                                </button>
+
+                                {/* Previous */}
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
-                                    className="px-4 py-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                                    className="px-3 py-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-gray-600 font-medium"
                                 >
-                                    Previous
+                                    Prev
                                 </button>
-                                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                                    <button
-                                        key={page}
-                                        onClick={() => setCurrentPage(page)}
-                                        className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold transition-colors ${currentPage === page
-                                            ? 'bg-secondary text-white'
-                                            : 'bg-white border border-gray-200 hover:bg-gray-50'
-                                            }`}
-                                    >
-                                        {page}
-                                    </button>
-                                ))}
+
+                                {/* Page Numbers */}
+                                {(() => {
+                                    let start = Math.max(currentPage - 2, 1);
+                                    let end = Math.min(start + 4, totalPages);
+
+                                    // Adjust range if we are near the end
+                                    if (end - start < 4) {
+                                        start = Math.max(end - 4, 1);
+                                    }
+
+                                    // Adjust range if we are near the start (already handled by max 1, but ensuring end captures full 5 if available)
+                                    if (totalPages >= 5 && end - start < 4) {
+                                        end = Math.min(start + 4, totalPages);
+                                    }
+
+                                    const pages = Array.from({ length: end - start + 1 }, (_, i) => start + i);
+
+                                    return pages.map(page => (
+                                        <button
+                                            key={page}
+                                            onClick={() => setCurrentPage(page)}
+                                            className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold transition-colors ${currentPage === page
+                                                ? 'bg-secondary text-white shadow-md'
+                                                : 'bg-white border border-gray-200 hover:bg-gray-50 text-gray-700'
+                                                }`}
+                                        >
+                                            {page}
+                                        </button>
+                                    ));
+                                })()}
+
+                                {/* Next */}
                                 <button
                                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                     disabled={currentPage === totalPages}
-                                    className="px-4 py-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+                                    className="px-3 py-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-gray-600 font-medium"
                                 >
                                     Next
+                                </button>
+
+                                {/* Last Page */}
+                                <button
+                                    onClick={() => setCurrentPage(totalPages)}
+                                    disabled={currentPage === totalPages}
+                                    className="p-2 rounded-lg border border-gray-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 text-gray-600"
+                                    title="Last Page"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
                                 </button>
                             </div>
                         )}
