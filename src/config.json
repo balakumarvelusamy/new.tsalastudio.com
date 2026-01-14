@@ -2,6 +2,7 @@
   "domain": "tsalastudio.com",
   "storage": "tsalastudio.com",
   "email_service_url": "https://asia-south1-tucfbclouddb.cloudfunctions.net/tuc_shop_node_api/email/",
+  "service_url": "https://ldnji2rlcc.execute-api.us-east-1.amazonaws.com/",
   "============================": "==========================",
   "service_url_dev": "https://ldnji2rlcc.execute-api.us-east-1.amazonaws.com/",
   "service_url_prod": "https://ldnji2rlcc.execute-api.us-east-1.amazonaws.com/",
