@@ -122,9 +122,11 @@ export default function CartPage() {
                                 <span>₹{grandTotal.toFixed(2)}</span>
                             </div>
                         </div>
-                        <button className="btn btn-primary w-full py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all">
-                            Checkout
-                        </button>
+                        <Link href="/shop/checkout">
+                            <button className="btn btn-primary w-full py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all">
+                                Checkout
+                            </button>
+                        </Link>
                         <div className="mt-4 text-center">
                             <Link href="/shop" className="text-sm text-gray-500 hover:text-primary underline">
                                 Continue Shopping
