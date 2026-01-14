@@ -144,7 +144,7 @@ export default async function ProductDetailsPage({ params }: { params: Promise<{
 
                                 <div className="flex flex-col gap-4 mb-8">
                                     <a
-                                        href={`https://wa.me/919880162266?text=Hi, I am interested in buying ${product.p_name} (ID: ${product.p_id})`}
+                                        href={`https://wa.me/919880162266?text=Hi, I am interested in buying ${product.p_name} (ID: ${product.id})`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="btn btn-primary w-full text-center py-4 text-lg shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2"

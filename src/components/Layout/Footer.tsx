@@ -50,6 +50,7 @@ const Footer = () => {
                                 { name: 'Blog', href: '/blog' },
                                 { name: 'Shop', href: '/shop' },
                                 { name: 'Contact', href: '/contact' },
+                                { name: 'Admin', href: '/admin' },
                             ].map((link) => (
                                 <li key={link.name}>
                                     <Link href={link.href} className="hover:text-secondary transition-colors">
