@@ -1,6 +1,6 @@
 import React from 'react';
 import { getItemsByType } from '../../services/api';
-import { BookOpenIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, ShoppingBagIcon, DocumentTextIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 
 export default async function AdminDashboard() {
@@ -9,6 +9,12 @@ export default async function AdminDashboard() {
 
     const products = await getItemsByType('product');
     const productCount = Array.isArray(products) ? products.length : 0;
+
+    const blogs = await getItemsByType('blog');
+    const blogCount = Array.isArray(blogs) ? blogs.length : 0;
+
+    const sliders = await getItemsByType('slider');
+    const sliderCount = Array.isArray(sliders) ? sliders.length : 0;
 
     return (
         <div>
@@ -43,6 +49,38 @@ export default async function AdminDashboard() {
                         <div className="flex items-baseline">
                             <span className="text-3xl font-bold text-gray-900">{productCount}</span>
                             <span className="ml-2 text-sm text-gray-500">Inventory</span>
+                        </div>
+                    </div>
+                </Link>
+
+                {/* Blog Tile */}
+                <Link href="/admin/blog" className="block group">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider">Total Blogs</h3>
+                            <div className="p-2 bg-purple-50 text-purple-600 rounded-lg group-hover:bg-purple-100 transition-colors">
+                                <DocumentTextIcon className="w-6 h-6" />
+                            </div>
+                        </div>
+                        <div className="flex items-baseline">
+                            <span className="text-3xl font-bold text-gray-900">{blogCount}</span>
+                            <span className="ml-2 text-sm text-gray-500">Posts</span>
+                        </div>
+                    </div>
+                </Link>
+
+                {/* Slider Tile */}
+                <Link href="/admin/slider" className="block group">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider">Total Slides</h3>
+                            <div className="p-2 bg-orange-50 text-orange-600 rounded-lg group-hover:bg-orange-100 transition-colors">
+                                <PhotoIcon className="w-6 h-6" />
+                            </div>
+                        </div>
+                        <div className="flex items-baseline">
+                            <span className="text-3xl font-bold text-gray-900">{sliderCount}</span>
+                            <span className="ml-2 text-sm text-gray-500">Images</span>
                         </div>
                     </div>
                 </Link>
