@@ -136,7 +136,7 @@ const ProductDetail = ({ product, reviews, relatedProducts }: { product: Product
                     {/* Description in Side Column */}
                     <div className="pt-4 border-t">
                         <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
-                        <div className="prose prose-sm max-w-none text-gray-600" dangerouslySetInnerHTML={{ __html: product.p_description }} />
+                        <div className="prose prose-sm max-w-none text-gray-600 font-sans prose-headings:font-heading [&_*]:!font-sans" dangerouslySetInnerHTML={{ __html: product.p_description }} />
                     </div>
                 </div>
             </div>
