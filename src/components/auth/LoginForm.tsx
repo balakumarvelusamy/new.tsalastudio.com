@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import config from '../../config.json';
 import { useRouter } from 'next/navigation';
+import { filterItems } from '../../services/api';
+import secureLocalStorage from 'react-secure-storage';
 
 export default function LoginForm() {
     const { register, handleSubmit } = useForm();
@@ -15,26 +17,33 @@ export default function LoginForm() {
         setError('');
 
         try {
-            const res = await fetch(`${config.service_url}login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    phonenumber: data.phonenumber,
-                    password: data.password
-                })
-            });
+            // Fetch user by phone number using generic filter
+            const users = await filterItems('phonenumber', data.phonenumber, 'type', 'user');
 
-            const result = await res.json();
+            if (!users || users.length === 0) {
+                setError('Phone number is incorrect');
+                setLoading(false);
+                return;
+            }
 
-            if (result.status === 200) {
-                localStorage.setItem('uuid', result.data.uuid);
-                localStorage.setItem('name', result.data.name);
-                localStorage.setItem('role', result.data.role);
-                localStorage.setItem('accessToken', result.data.token);
-                // router.push('/shop'); // Redirect to shop
-                window.location.href = '/shop'; // Force full nav ensures Header updates state if any
+            const user = users[0];
+
+            // Import bcryptjs dynamically
+            const bcrypt = await import('bcryptjs');
+
+            // Compare password
+            const isMatch = await bcrypt.compare(data.password, user.password);
+
+            if (isMatch) {
+                // Success
+                secureLocalStorage.setItem('tsalauuid', user.userid || user.id);
+                secureLocalStorage.setItem('tsalaname', user.name);
+                secureLocalStorage.setItem('tsalarole', user.role);
+                secureLocalStorage.setItem('tsalatoken', 'client-session');
+
+                window.location.href = '/shop';
             } else {
-                setError(result.message || 'Login failed');
+                setError('Password is incorrect');
             }
         } catch (e) {
             setError('Something went wrong. Please try again.');
