@@ -108,3 +108,29 @@ export const getItemBySlug = async (slug: string) => {
         return null;
     }
 };
+// Check if email already exists in newsletter
+export const checkSubscription = async (email: string) => {
+    try {
+        console.log("Checking subscription for email:", email);
+        const requestBody = {
+            column1: "email",
+            value1: email,
+            column2: "type",
+            value2: "newsletter",
+        };
+
+        const response = await fetch(`${API_BASE_URL}items/filter2column`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const data = await response.json();
+        return data || [];
+    } catch (err) {
+        console.error("Error checking subscription:", err);
+        return [];
+    }
+};
