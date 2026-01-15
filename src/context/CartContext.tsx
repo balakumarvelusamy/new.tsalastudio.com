@@ -1,5 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { filterItems, saveItem, deleteItem } from '../services/api';
+import secureLocalStorage from 'react-secure-storage';
 
 import config from '../config.json';
 
@@ -29,29 +31,75 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null);
 
-    // Load from localStorage on mount
+    // Initial load
     useEffect(() => {
-        const storedCart = localStorage.getItem('tsalacart');
-        if (storedCart) {
+        const initializeCart = async () => {
+            // Check for logged-in user
+            let uuid = null;
             try {
-                setCartItems(JSON.parse(storedCart));
-            } catch (e) {
-                console.error("Failed to parse cart from local storage", e);
+                if (typeof window !== 'undefined') {
+                    uuid = secureLocalStorage.getItem('tsalauuid') as string;
+                }
+            } catch (err) {
+                console.error("Error accessing secure storage:", err);
             }
-        }
-        setIsLoaded(true);
+
+            setUserId(uuid);
+
+            if (uuid) {
+                try {
+                    // Fetch from API for user
+                    // Using 'cart' as it makes more sense.
+                    const serverItems = await filterItems('userid', uuid, 'type', 'cart');
+
+                    // Transformation with safety checks
+                    const mappedItems: CartItem[] = Array.isArray(serverItems) ? serverItems.map((item: any) => {
+                        const originalId = item.productid || (item.id && item.id.includes('-') ? item.id.split('-').pop() : item.id);
+                        return {
+                            id: originalId || item.id,
+                            name: item.name || 'Unknown Product',
+                            image: item.image || '',
+                            price: Number(item.price) || 0,
+                            quantity: Number(item.quantity) || 1
+                        };
+                    }) : [];
+
+                    setCartItems(mappedItems);
+                } catch (e) {
+                    console.error("Failed to fetch server cart:", e);
+                }
+            } else {
+                // Guest: Load from localStorage
+                const storedCart = localStorage.getItem('tsalacart');
+                if (storedCart) {
+                    try {
+                        setCartItems(JSON.parse(storedCart));
+                    } catch (e) {
+                        console.error("Failed to parse cart from local storage", e);
+                    }
+                }
+            }
+            setIsLoaded(true);
+        };
+
+        initializeCart();
     }, []);
 
-    // Save to localStorage whenever cart changes, but only after initial load
+    // Sync to Storage/API on change
+    // For API: We handle save on action (addToCart/etc) rather than effect to avoid circular loops or excessive calls
+    // For LocalStorage: We keep effect for guest
     useEffect(() => {
-        if (isLoaded) {
+        if (isLoaded && !userId) {
             localStorage.setItem('tsalacart', JSON.stringify(cartItems));
         }
-    }, [cartItems, isLoaded]);
+    }, [cartItems, isLoaded, userId]);
 
     const addToCart = (product: CartItem) => {
         let action: 'added' | 'updated' = 'added';
+
+        // Optimistic Update
         setCartItems((prevItems) => {
             const existingItem = prevItems.find((item) => item.id === product.id);
             if (existingItem) {
@@ -65,22 +113,89 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                 return [...prevItems, product];
             }
         });
+
+        // API Sync if Logged In
+        if (userId) {
+            // Calculate new quantity for the specific item
+            // We need to look at the *next* state, but inside the setter we only have prev.
+            // Using the logic: existing quantity + add quantity
+            // We can't easily access the "updated" state here without a ref or helper, 
+            // but we can re-derive it.
+
+            // Wait, we need the CURRENT total quantity to save. 
+            // SetTimeout to let state settle? No, better to calculate explicit new value.
+
+            // Helper to get current item count
+            const currentItem = cartItems.find(i => i.id === product.id);
+            const newQuantity = (currentItem?.quantity || 0) + product.quantity;
+
+            const cartItemPayload = {
+                id: `cart-${userId}-${product.id}`, // Deterministic ID
+                userid: userId,
+                type: 'cart',
+                productid: product.id, // Explicitly save product ID
+                name: product.name,
+                image: product.image,
+                price: product.price,
+                quantity: newQuantity
+            };
+
+            saveItem(cartItemPayload).catch(console.error);
+        }
+
         return action;
     };
 
     const removeFromCart = (id: string) => {
         setCartItems((prevItems) => prevItems.filter((item) => item.id !== id));
+
+        if (userId) {
+            deleteItem(`cart-${userId}-${id}`).catch(console.error);
+        }
     };
 
     const updateQuantity = (id: string, quantity: number) => {
         if (quantity < 1) return;
+
         setCartItems((prevItems) =>
             prevItems.map((item) => (item.id === id ? { ...item, quantity } : item))
         );
+
+        if (userId) {
+            const item = cartItems.find(i => i.id === id);
+            if (item) {
+                const cartItemPayload = {
+                    id: `cart-${userId}-${id}`,
+                    userid: userId,
+                    type: 'cart',
+                    productid: id,
+                    name: item.name,
+                    image: item.image,
+                    price: item.price,
+                    quantity: quantity
+                };
+                saveItem(cartItemPayload).catch(console.error);
+            }
+        }
     };
 
     const clearCart = () => {
-        setCartItems([]);
+        // If user, we might want to delete all.
+        // Since we don't have a "delete all by filter" API easily exposed in client snippet,
+        // we might have to loop delete or just clear local and let server be stale? 
+        // No, server must be cleared.
+        if (userId) {
+            // Optimistic clear
+            const itemsToDelete = [...cartItems];
+            setCartItems([]);
+
+            // Background delete
+            itemsToDelete.forEach(item => {
+                deleteItem(`cart-${userId}-${item.id}`).catch(console.error);
+            });
+        } else {
+            setCartItems([]);
+        }
     };
 
     const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);

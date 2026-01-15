@@ -48,7 +48,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                 )}
             </Link>
 
-            <div className="p-3 flex flex-col flex-1">
+            <div className="p-2 md:p-3 flex flex-col flex-1">
                 <div className="mb-1">
                     <span className="text-[10px] text-gray-400 uppercase tracking-wider block mb-0.5">{product.p_category}</span>
                     <h3 className="text-sm font-semibold text-gray-900 leading-tight line-clamp-2 min-h-[36px] hover:text-secondary transition-colors">
@@ -81,7 +81,7 @@ const ProductCard = ({ product }: { product: Product }) => {
                             setIsAdded(true);
                             setTimeout(() => setIsAdded(false), 5000);
                         }}
-                        className={`text-xs px-3 py-1.5 rounded h-8 flex items-center justify-center whitespace-nowrap transition-colors ${isAdded
+                        className={`text-[10px] md:text-xs px-0 md:px-3 py-1 md:py-1.5 rounded h-7 md:h-8 flex items-center justify-center whitespace-nowrap transition-colors min-w-[70px] ${isAdded
                             ? 'bg-green-600 text-white cursor-default'
                             : 'btn btn-primary'
                             }`}

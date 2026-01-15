@@ -134,3 +134,54 @@ export const checkSubscription = async (email: string) => {
         return [];
     }
 };
+// Generic filter function to get items by 2 columns
+export const filterItems = async (col1: string, val1: string, col2: string, val2: string) => {
+    try {
+        console.log(`Filtering items by ${col1}:${val1} and ${col2}:${val2}`);
+        const requestBody = {
+            column1: col1,
+            value1: val1,
+            column2: col2,
+            value2: val2,
+        };
+
+        const response = await fetch(`${API_BASE_URL}items/filter2column`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestBody),
+        });
+
+        const data = await response.json();
+        return data || [];
+    } catch (err) {
+        console.error("Error filtering items:", err);
+        return [];
+    }
+};
+
+// Get items by ID
+export const getItemsById = async (id: string) => {
+    try {
+        console.log("Fetching items by ID:", id);
+        const response = await fetch(`${API_BASE_URL}items/id/${id}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cache: 'no-store'
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch: ${response.status} - ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        console.log("Fetched data:", data);
+        return data || [];
+    } catch (err) {
+        console.error("Error fetching items by ID:", err);
+        return [];
+    }
+};
