@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
-import usersDataRaw from '../../../data/users.json';
-import newsletterDataRaw from '../../../data/newsletter.json';
+import usersDataRaw from '../../../data/gallery.json';
+import newsletterDataRaw from '../../../data/gallery.json';
 import { saveItem } from '../../../services/api';
 
 const usersData = usersDataRaw as any[];
