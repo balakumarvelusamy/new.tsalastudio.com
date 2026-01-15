@@ -1,8 +1,10 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart } from '../../../context/CartContext';
 import Link from 'next/link';
 import config from '../../../config.json';
+import { getItemsById } from '../../../services/api';
+import secureLocalStorage from 'react-secure-storage';
 
 interface AddressForm {
     name: string;
@@ -45,6 +47,49 @@ export default function CheckoutPage() {
 
     const [sameAsShipping, setSameAsShipping] = useState(true);
     const [orderNotes, setOrderNotes] = useState('');
+
+    // Pre-fill user data
+    useEffect(() => {
+        const fetchUserData = async () => {
+            // Safe secure storage access
+            let uuid = null;
+            try {
+                if (typeof window !== 'undefined') {
+                    uuid = secureLocalStorage.getItem('tsalauuid') as string;
+                }
+            } catch (e) {
+                console.error("Error accessing secure storage", e);
+            }
+
+            if (uuid) {
+                try {
+                    const data = await getItemsById(uuid);
+                    if (data) {
+                        // Robustly handle array or object return
+                        const user = Array.isArray(data) ? (data.length > 0 ? data[0] : null) : data;
+
+                        if (user) {
+                            setShippingAddress(prev => ({
+                                ...prev,
+                                name: user.name || '',
+                                email: user.email || '',
+                                phone: user.phonenumber || user.phone || '', // Handle varied keys
+                                address: user.address || '',
+                                city: user.city || '',
+                                state: user.state || '',
+                                pincode: user.pincode || ''
+                            }));
+                        }
+                    }
+                } catch (error) {
+                    console.error("Failed to fetch user details for auto-fill:", error);
+                }
+            }
+        };
+
+        fetchUserData();
+    }, []);
+
 
     // Handle Input Change
     const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
