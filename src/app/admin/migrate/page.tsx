@@ -1,188 +1,183 @@
 'use client';
+import React, { useState } from 'react';
+import usersDataRaw from '../../../data/users.json';
+import newsletterDataRaw from '../../../data/newsletter.json';
+import { saveItem } from '../../../services/api';
 
-import React, { useState, useEffect } from 'react';
-import { saveItem, getSecrets } from '../../../services/api';
-import { uploadToS3 } from '../s3Utils';
-import legacyCourses from '../../../data/courses.json';
-import legacyProducts from '../../../data/products.json';
-import { useRouter } from 'next/navigation';
+const usersData = usersDataRaw as any[];
+const newsletterData = newsletterDataRaw as any[];
 
-export default function MigratePage() {
-    const [logs, setLogs] = useState<string[]>([]);
-    const [isMigrating, setIsMigrating] = useState(false);
-    const [progress, setProgress] = useState(0);
-    const [secret, setSecret] = useState<any>(null);
-    const router = useRouter();
+export default function MigrateUsersPage() {
+    const [status, setStatus] = useState('');
+    const [migratedCount, setMigratedCount] = useState(0);
 
-    useEffect(() => {
-        getSecrets().then(setSecret).catch(err => addLog(`Failed to load secrets: ${err.message}`));
-    }, []);
-
-    const addLog = (msg: string) => {
-        setLogs(prev => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev]);
-    };
-
-    const fetchImage = async (url: string): Promise<Blob | null> => {
+    // --- User Migration Logic ---
+    const migrateOneUser = async () => {
+        setStatus('Migrating 1 user...');
         try {
-            // Use proxy to avoid CORS
-            const proxyUrl = `/api/proxy-image?url=${encodeURIComponent(url)}`;
-            const res = await fetch(proxyUrl);
-
-            if (!res.ok) {
-                const errorText = await res.text();
-                throw new Error(`HTTP ${res.status}: ${errorText}`);
+            const user = usersData[0]; // Take the first user
+            const newUser = {
+                ...user,
+                id: user.userid,
+                type: 'user'
             }
-            return await res.blob();
-        } catch (err: any) {
-            addLog(`Error fetching image: ${err.message}`);
-            return null;
+            // @ts-ignore
+            delete newUser.userid;
+
+            console.log("Migrating:", newUser);
+            await saveItem(newUser);
+
+            setStatus('Successfully migrated 1 user! Check console for details.');
+            setMigratedCount(1);
+        } catch (error) {
+            console.error(error);
+            setStatus('Error migrating user. Check console.');
         }
     };
 
-    const handleMigration = async () => {
-        if (!secret) {
-            alert("AWS Secrets not loaded yet.");
-            return;
+    const migrateAllUsers = async () => {
+        if (!confirm(`Are you sure you want to migrate all ${usersData.length} users?`)) return;
+
+        setStatus('Starting full user migration...');
+        setMigratedCount(0);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (let i = 0; i < usersData.length; i++) {
+            const user = usersData[i];
+            try {
+                setStatus(`Migrating User ${i + 1}/${usersData.length}: ${user.name}`);
+
+                const newUser = {
+                    ...user,
+                    id: user.userid,
+                    type: 'user'
+                };
+                // @ts-ignore
+                delete newUser.userid;
+
+                await saveItem(newUser);
+                successCount++;
+                setMigratedCount(successCount);
+            } catch (error) {
+                console.error(`Error migrating user ${user.email}:`, error);
+                errorCount++;
+            }
+            // Small delay to be nice to the API
+            await new Promise(r => setTimeout(r, 100));
         }
 
-        if (!confirm("Are you sure you want to start the migration? This will upload images to S3 and save data to the DB.")) {
-            return;
-        }
+        setStatus(`User Migration Complete! Success: ${successCount}, Errors: ${errorCount}`);
+    };
 
-        setIsMigrating(true);
-        setLogs([]);
-        setProgress(0);
-
+    // --- Newsletter Migration Logic ---
+    const migrateOneNewsletter = async () => {
+        setStatus('Migrating 1 newsletter subscriber...');
         try {
-            const total = legacyProducts.length;
-            let successCount = 0;
+            const item = newsletterData[0];
+            const newItem = {
+                ...item,
+                id: crypto.randomUUID(),
+                type: 'newsletter',
+                isactive: 1
+            };
 
-            for (let i = 0; i < total; i++) {
-                const item = legacyProducts[i];
-                const title = item.p_name || 'Untitled Product';
-                addLog(`Processing ${i + 1}/${total}: ${title}`);
+            console.log("Migrating Newsletter:", newItem);
+            await saveItem(newItem);
 
-                let imageUrl = item.p_image || '';
+            setStatus('Successfully migrated 1 newsletter subscriber!');
+        } catch (error) {
+            console.error(error);
+            setStatus('Error migrating newsletter. Check console.');
+        }
+    };
 
-                // Ensure ID
-                const id = item.id || crypto.randomUUID();
+    const migrateAllNewsletter = async () => {
+        if (!confirm(`Are you sure you want to migrate all ${newsletterData.length} newsletter subscribers?`)) return;
 
-                // 1. Handle Image Migration
-                if (imageUrl && imageUrl.includes('firebasestorage')) {
-                    addLog(`  > Downloading image...`);
-                    const blob = await fetchImage(imageUrl);
+        setStatus('Starting full newsletter migration...');
+        let successCount = 0;
+        let errorCount = 0;
 
-                    if (blob) {
-                        const ext = blob.type.split('/')[1] || 'jpg';
-                        // Use id + slug-like title for filename
-                        const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                        const baseName = `${id}-${slug}`;
-                        const filename = `${baseName}.${ext}`;
+        for (let i = 0; i < newsletterData.length; i++) {
+            const item = newsletterData[i];
+            try {
+                setStatus(`Migrating Newsletter ${i + 1}/${newsletterData.length}: ${item.email}`);
 
-                        addLog(`  > Uploading to S3 as ${filename}...`);
-                        try {
-                            const newUrl = await uploadToS3(blob, filename, secret, 'products');
-                            imageUrl = newUrl;
-                            addLog(`  > Upload success: ${newUrl}`);
-                        } catch (s3Err: any) {
-                            addLog(`  > S3 Upload Failed: ${s3Err.message}`);
-                        }
-                    } else {
-                        addLog(`  > Failed to download image.`);
-                    }
-                } else {
-                    addLog(`  > Skipping image (already migrated or missing).`);
-                }
-
-                // 2. Prepare Data
-                // Construct payload matching Product structure
-                const payload = {
+                const newItem = {
                     ...item,
-                    id: id,
-                    posttitle: title, // Map p_name to posttitle for consistency or keep p_name? Sticking to raw item + id + type override
-                    p_image: imageUrl,
-                    type: 'product', // Enforce type
-                    createdby: item.createdby || 'MigrationTool',
-                    updateddate: new Date().toISOString(),
-                    slug: title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+                    id: crypto.randomUUID(),
+                    type: 'newsletter',
+                    isactive: 1
                 };
 
-                // 3. Save to DB
-                addLog(`  > Saving to database...`);
-                try {
-                    await saveItem(payload);
-                    successCount++;
-                    addLog(`  > Saved successfully.`);
-                } catch (dbErr: any) {
-                    addLog(`  > DB Save Failed: ${dbErr.message}`);
-                }
-
-                // Update Progress
-                setProgress(Math.round(((i + 1) / total) * 100));
-
-                // Small delay to be gentle
-                await new Promise(r => setTimeout(r, 500));
-
-                // TESTING: Stop after 1 item
-                //addLog("Testing Mode: Stopping after first item.");
-                //break;
+                await saveItem(newItem);
+                successCount++;
+            } catch (error) {
+                console.error(`Error migrating newsletter ${item.email}:`, error);
+                errorCount++;
             }
-
-            addLog(`Migration Complete! Successfully migrated ${successCount}/${total} items.`);
-
-        } catch (err: any) {
-            addLog(`Critical Error: ${err.message}`);
-        } finally {
-            setIsMigrating(false);
+            // Small delay
+            await new Promise(r => setTimeout(r, 100));
         }
+
+        setStatus(`Newsletter Migration Complete! Success: ${successCount}, Errors: ${errorCount}`);
     };
 
     return (
-        <div className="max-w-4xl mx-auto">
-            <h1 className="text-2xl font-bold mb-6">Data Migration Tool</h1>
+        <div className="p-8">
+            <h1 className="text-2xl font-bold mb-6">Data Migration</h1>
 
-            <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 mb-6">
-                <div className="mb-4">
-                    <h2 className="text-lg font-semibold text-gray-800">Legacy Product Migration</h2>
-                    <p className="text-gray-500 text-sm mt-1">
-                        Found <strong>{legacyProducts.length}</strong> items in <code>src/data/products.json</code>.
-                    </p>
+            {status && (
+                <div className="mb-6 p-4 bg-gray-100 border border-blue-200 rounded-lg sticky top-4 z-10 shadow-sm">
+                    <strong>Status:</strong> {status}
+                </div>
+            )}
+
+            <div className="grid md:grid-cols-2 gap-8">
+                {/* Users Section */}
+                <div className="bg-white p-6 rounded shadow border border-gray-200">
+                    <h2 className="text-xl font-bold mb-4 border-b pb-2">Users Migration</h2>
+                    <p className="mb-4">Total Users: <strong>{usersData.length}</strong></p>
+
+                    <div className="space-y-3">
+                        <button
+                            onClick={migrateOneUser}
+                            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full"
+                        >
+                            Test Migrate 1 User
+                        </button>
+
+                        <button
+                            onClick={migrateAllUsers}
+                            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full"
+                        >
+                            Migrate ALL {usersData.length} Users
+                        </button>
+                    </div>
                 </div>
 
-                <div className="flex gap-4 items-center">
-                    <button
-                        onClick={handleMigration}
-                        disabled={isMigrating || !secret}
-                        className={`px-6 py-2 rounded-lg text-white font-medium transition-colors ${isMigrating || !secret
-                            ? 'bg-gray-400 cursor-not-allowed'
-                            : 'bg-blue-600 hover:bg-blue-700'
-                            }`}
-                    >
-                        {isMigrating ? 'Migrating...' : 'Start Migration'}
-                    </button>
+                {/* Newsletter Section */}
+                <div className="bg-white p-6 rounded shadow border border-gray-200">
+                    <h2 className="text-xl font-bold mb-4 border-b pb-2">Newsletter Migration</h2>
+                    <p className="mb-4">Total Subscribers: <strong>{newsletterData.length}</strong></p>
 
-                    {isMigrating && (
-                        <div className="flex-1 max-w-xs">
-                            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
-                                <div
-                                    className="h-full bg-blue-500 transition-all duration-300"
-                                    style={{ width: `${progress}%` }}
-                                />
-                            </div>
-                            <div className="text-xs text-gray-500 mt-1 text-center">{progress}%</div>
-                        </div>
-                    )}
+                    <div className="space-y-3">
+                        <button
+                            onClick={migrateOneNewsletter}
+                            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 w-full"
+                        >
+                            Test Migrate 1 Subscriber
+                        </button>
+
+                        <button
+                            onClick={migrateAllNewsletter}
+                            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 w-full"
+                        >
+                            Migrate ALL {newsletterData.length} Subscribers
+                        </button>
+                    </div>
                 </div>
-            </div>
-
-            <div className="bg-gray-900 text-green-400 font-mono text-xs p-4 rounded-xl shadow-inner h-96 overflow-y-auto">
-                {logs.length === 0 ? (
-                    <div className="text-gray-600">Ready to start...</div>
-                ) : (
-                    logs.map((log, i) => (
-                        <div key={i} className="mb-1 border-b border-gray-800 pb-1 last:border-0">{log}</div>
-                    ))
-                )}
             </div>
         </div>
     );
