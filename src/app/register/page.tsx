@@ -23,12 +23,20 @@ export default function RegisterPage() {
         }
 
         try {
-            // 2. Check for duplicate phone number
-            // User requested check on 'phonenumber'
-            const existingUsers = await filterItems('phonenumber', data.phonenumber, 'type', 'user');
+            // 2. Check for duplicate phone number AND email
+            const [existingPhone, existingEmail] = await Promise.all([
+                filterItems('phonenumber', data.phonenumber, 'type', 'user'),
+                filterItems('email', data.email, 'type', 'user')
+            ]);
 
-            if (existingUsers && Array.isArray(existingUsers) && existingUsers.length > 0) {
+            if (existingPhone && Array.isArray(existingPhone) && existingPhone.length > 0) {
                 setStatus({ type: 'error', message: "Phone Number already exists!!" });
+                setLoading(false);
+                return;
+            }
+
+            if (existingEmail && Array.isArray(existingEmail) && existingEmail.length > 0) {
+                setStatus({ type: 'error', message: "Email Account already exists!!" });
                 setLoading(false);
                 return;
             }
