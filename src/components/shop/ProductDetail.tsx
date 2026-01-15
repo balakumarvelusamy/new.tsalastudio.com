@@ -118,64 +118,48 @@ const ProductDetail = ({ product, reviews, relatedProducts }: { product: Product
                         ₹{Number(product.p_price).toFixed(2)}
                     </div>
 
-                    <button
-                        onClick={addToCart}
-                        disabled={loading || isAdded}
-                        className={`btn w-full md:w-auto transition-all ${isAdded
-                            ? 'bg-green-600 border-green-600 text-white cursor-default hover:bg-green-600 hover:border-green-600'
-                            : 'btn-primary'
-                            }`}
-                    >
-                        {loading ? 'Adding...' : isAdded ? feedbackText : 'Add to Cart'}
-                    </button>
+                    <div className="flex flex-col gap-4">
+                        <button
+                            onClick={addToCart}
+                            disabled={loading || isAdded}
+                            className={`btn w-full py-4 text-lg transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 ${isAdded
+                                ? 'bg-green-600 border-green-600 text-white cursor-default hover:bg-green-600 hover:border-green-600'
+                                : 'btn-primary'
+                                }`}
+                        >
+                            {loading ? 'Adding...' : isAdded ? feedbackText : 'Add to Cart'}
+                        </button>
+                    </div>
 
-                    <div className="border-t pt-6 text-sm text-gray-500 space-y-2">
-                        <p>Availability: <span className="text-green-600 font-semibold">{product.p_quantity && product.p_quantity > 0 ? 'In Stock' : 'Out of Stock'}</span></p>
-                        <p>Category: <span className="text-gray-900 font-medium">{''}</span></p> {/* Category to be passed if needed */}
+
+
+                    {/* Description in Side Column */}
+                    <div className="pt-4 border-t">
+                        <h3 className="font-semibold text-gray-900 mb-2">Description</h3>
+                        <div className="prose prose-sm max-w-none text-gray-600" dangerouslySetInnerHTML={{ __html: product.p_description }} />
                     </div>
                 </div>
             </div>
 
-            {/* Tabs */}
-            <div>
-                <div className="flex border-b">
-                    <button
-                        onClick={() => setActiveTab('description')}
-                        className={`px-8 py-3 font-semibold border-b-2 transition-colors ${activeTab === 'description' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        Description
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('reviews')}
-                        className={`px-8 py-3 font-semibold border-b-2 transition-colors ${activeTab === 'reviews' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-700'}`}
-                    >
-                        Reviews ({reviews.length})
-                    </button>
-                </div>
-
-                <div className="py-8">
-                    {activeTab === 'description' && (
-                        <div className="prose max-w-none text-gray-600" dangerouslySetInnerHTML={{ __html: product.p_description }} />
-                    )}
-                    {activeTab === 'reviews' && (
-                        <div className="space-y-6">
-                            {reviews.length > 0 ? reviews.map((r, i) => (
-                                <div key={i} className="bg-gray-50 p-6 rounded-xl">
-                                    <div className="flex justify-between mb-2">
-                                        <h4 className="font-bold">{r.name}</h4>
-                                        <span className="text-sm text-gray-500">{r.displaydate}</span>
-                                    </div>
-                                    <div className="flex text-yellow-500 mb-2">
-                                        {[...Array(5)].map((_, si) => (
-                                            <StarIcon key={si} className={`w-4 h-4 ${si < r.rating ? '' : 'text-gray-300'}`} />
-                                        ))}
-                                    </div>
-                                    <p className="text-gray-600">{r.comments}</p>
-                                </div>
-                            )) : (
-                                <p className="text-gray-500">No reviews yet.</p>
-                            )}
+            {/* Reviews Section */}
+            <div className="border-t pt-12">
+                <h3 className="text-2xl font-bold font-heading mb-8">Customer Reviews ({reviews.length})</h3>
+                <div className="space-y-6">
+                    {reviews.length > 0 ? reviews.map((r, i) => (
+                        <div key={i} className="bg-gray-50 p-6 rounded-xl">
+                            <div className="flex justify-between mb-2">
+                                <h4 className="font-bold">{r.name}</h4>
+                                <span className="text-sm text-gray-500">{r.displaydate}</span>
+                            </div>
+                            <div className="flex text-yellow-500 mb-2">
+                                {[...Array(5)].map((_, si) => (
+                                    <StarIcon key={si} className={`w-4 h-4 ${si < r.rating ? '' : 'text-gray-300'}`} />
+                                ))}
+                            </div>
+                            <p className="text-gray-600">{r.comments}</p>
                         </div>
+                    )) : (
+                        <p className="text-gray-500">No reviews yet.</p>
                     )}
                 </div>
             </div>
