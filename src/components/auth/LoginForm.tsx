@@ -5,6 +5,7 @@ import config from '../../config.json';
 import { useRouter } from 'next/navigation';
 import { filterItems } from '../../services/api';
 import secureLocalStorage from 'react-secure-storage';
+import Link from 'next/link';
 
 export default function LoginForm() {
     const { register, handleSubmit } = useForm();
@@ -94,7 +95,7 @@ export default function LoginForm() {
             </form>
 
             <div className="mt-6 text-center text-sm">
-                <p className="text-gray-500">Don't have an account? <span className="text-gray-400 cursor-not-allowed">Register (Coming Soon)</span></p>
+                <p className="text-gray-500">Don't have an account? <Link href="/register" className="text-primary font-semibold hover:underline">Register</Link></p>
             </div>
         </div>
     );
