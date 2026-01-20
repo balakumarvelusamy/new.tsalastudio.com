@@ -15,7 +15,8 @@ export default function AdminSidebar() {
         { name: 'Courses', href: '/admin/course', icon: BookOpenIcon },
         { name: 'Products', href: '/admin/product', icon: ShoppingBagIcon },
         // { name: 'Migration', href: '/admin/migrate', icon: ArrowPathIcon },
-        { name: 'Blog', href: '/admin/blog', icon: DocumentTextIcon },
+        { name: 'Newsletter', href: '/admin/newsletter', icon: DocumentTextIcon }, // Reusing Icon for now or import EnvelopeIcon
+        { name: 'Blog', href: '/admin/blog', icon: BookOpenIcon },
     ];
 
     const toggleSidebar = () => setIsOpen(!isOpen);
@@ -74,9 +75,7 @@ export default function AdminSidebar() {
                             </Link>
                         );
                     })}
-                    <div className="px-4 py-3 text-gray-400 text-sm italic">
-                        More modules coming soon...
-                    </div>
+
                 </nav>
 
                 <div className="p-4 border-t border-gray-100">

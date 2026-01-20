@@ -156,6 +156,9 @@ export default function CourseListClient({ initialCourses }: { initialCourses: a
                                     Created
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                    Course Info
+                                </th>
+                                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                     Status
                                 </th>
                                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -200,8 +203,21 @@ export default function CourseListClient({ initialCourses }: { initialCourses: a
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            <div className="text-sm font-medium text-gray-900 line-clamp-2 max-w-xs" title={course.posttitle}>
+                                            <div className="text-sm text-gray-500">
                                                 {course.createddate ? new Date(course.createddate).toLocaleDateString() : '-'}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex flex-col gap-1 text-xs">
+                                                {course.price && (
+                                                    <span className="font-semibold text-gray-900">₹{course.price}</span>
+                                                )}
+                                                {course.coursedate && (
+                                                    <span className="text-gray-600">📅 {new Date(course.coursedate).toLocaleDateString()}</span>
+                                                )}
+                                                {course.coursetime && (
+                                                    <span className="text-gray-600">⏰ {course.coursetime}</span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
