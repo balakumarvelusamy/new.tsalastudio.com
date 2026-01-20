@@ -44,6 +44,9 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
         createdby: initialData?.createdby || 'Admin',
         createddate: initialData?.createddate || new Date().toISOString(),
         updateddate: new Date().toISOString(),
+        price: initialData?.price || '',
+        coursedate: initialData?.coursedate || '',
+        coursetime: initialData?.coursetime || '',
     });
 
     // Fetch secrets on mount
@@ -221,6 +224,44 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
                             <option key={cat} value={cat}>{cat}</option>
                         ))}
                     </select>
+                </div>
+
+                {/* Price */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Price (₹)</label>
+                    <input
+                        type="number"
+                        name="price"
+                        value={formData.price}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                        placeholder="e.g. 5000"
+                    />
+                </div>
+
+                {/* Date */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Course Date</label>
+                    <input
+                        type="date"
+                        name="coursedate"
+                        value={formData.coursedate}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                    />
+                </div>
+
+                {/* Time */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Course Time</label>
+                    <input
+                        type="text"
+                        name="coursetime"
+                        value={formData.coursetime}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                        placeholder="e.g. 10:00 AM - 1:00 PM"
+                    />
                 </div>
 
                 {/* Image Upload */}
