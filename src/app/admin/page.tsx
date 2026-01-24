@@ -4,6 +4,9 @@ import { BookOpenIcon, ShoppingBagIcon, DocumentTextIcon, PhotoIcon } from '@her
 import Link from 'next/link';
 
 export default async function AdminDashboard() {
+    const orders = await getItemsByType('order');
+    const orderCount = Array.isArray(orders) ? orders.length : 0;
+
     const courses = await getItemsByType('course');
     const courseCount = Array.isArray(courses) ? courses.length : 0;
 
@@ -65,6 +68,22 @@ export default async function AdminDashboard() {
                         <div className="flex items-baseline">
                             <span className="text-3xl font-bold text-gray-900">{blogCount}</span>
                             <span className="ml-2 text-sm text-gray-500">Posts</span>
+                        </div>
+                    </div>
+                </Link>
+
+                {/* Orders Tile */}
+                <Link href="/admin/order" className="block group">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider">Total Orders</h3>
+                            <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                                <ShoppingBagIcon className="w-6 h-6" />
+                            </div>
+                        </div>
+                        <div className="flex items-baseline">
+                            <span className="text-3xl font-bold text-gray-900">{orderCount}</span>
+                            <span className="ml-2 text-sm text-gray-500">Processed</span>
                         </div>
                     </div>
                 </Link>

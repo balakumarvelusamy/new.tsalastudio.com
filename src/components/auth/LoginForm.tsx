@@ -21,13 +21,22 @@ export default function LoginForm() {
             // Fetch user by phone number using generic filter
             const users = await filterItems('phonenumber', data.phonenumber, 'type', 'user');
 
-            if (!users || users.length === 0) {
+            if (!Array.isArray(users) || users.length === 0) {
                 setError('Phone number is incorrect');
                 setLoading(false);
                 return;
             }
 
             const user = users[0];
+
+            if (!user || !user.password) {
+                // User found, but data is corrupted or password missing?
+                // Treat as invalid credentials to be safe
+                console.error("User found but invalid user object structure or missing password", user);
+                setError('Invalid account data');
+                setLoading(false);
+                return;
+            }
 
             // Import bcryptjs dynamically
             const bcrypt = await import('bcryptjs');
@@ -65,10 +74,18 @@ export default function LoginForm() {
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
                     <input
-                        type="text"
+                        type="tel"
+                        inputMode="numeric"
+                        pattern="[0-9]{10}"
+                        maxLength={10}
                         required
                         placeholder="Enter phone number"
-                        {...register('phonenumber')}
+                        {...register('phonenumber', {
+                            onChange: (e) => {
+                                e.target.value = e.target.value.replace(/\D/g, '');
+                                if (e.target.value.length > 10) e.target.value = e.target.value.slice(0, 10);
+                            }
+                        })}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-secondary focus:border-transparent outline-none"
                     />
                 </div>

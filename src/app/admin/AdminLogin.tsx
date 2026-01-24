@@ -14,7 +14,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-
+        //tsalaadmin
         if (login(password)) {
             onLogin();
         } else {

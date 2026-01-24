@@ -16,7 +16,7 @@ interface AddressForm {
     pincode: string;
 }
 
-const InputField = ({ label, name, type = "text", value, onChange, placeholder, required = true, className = "" }: any) => (
+const InputField = ({ label, name, type = "text", value, onChange, placeholder, required = true, className = "", inputMode = undefined, pattern = undefined, maxLength = undefined }: any) => (
     <div className={`space-y-1.5 ${className}`}>
         <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">
             {label} {required && <span className="text-red-500">*</span>}
@@ -28,13 +28,18 @@ const InputField = ({ label, name, type = "text", value, onChange, placeholder, 
             value={value}
             onChange={onChange}
             placeholder={placeholder}
-            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium placeholder:text-gray-400"
+            inputMode={inputMode}
+            pattern={pattern}
+            maxLength={maxLength}
+            className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 focus:outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-medium placeholder:text-gray-400 invalid:ring-red-500 invalid:text-red-600"
         />
     </div>
 );
 
 export default function CheckoutPage() {
     const { cartItems, cartTotal, shippingCost, taxAmount, grandTotal } = useCart();
+    const [showConfirmation, setShowConfirmation] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null);
 
     // Form States
     const [shippingAddress, setShippingAddress] = useState<AddressForm>({
@@ -56,6 +61,7 @@ export default function CheckoutPage() {
             try {
                 if (typeof window !== 'undefined') {
                     uuid = secureLocalStorage.getItem('tsalauuid') as string;
+                    if (uuid) setUserId(uuid);
                 }
             } catch (e) {
                 console.error("Error accessing secure storage", e);
@@ -93,16 +99,33 @@ export default function CheckoutPage() {
 
     // Handle Input Change
     const handleShippingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
+        if (e.target.name === 'phone') {
+            const val = e.target.value.replace(/\D/g, '');
+            if (val.length <= 10) setShippingAddress({ ...shippingAddress, phone: val });
+        } else {
+            setShippingAddress({ ...shippingAddress, [e.target.name]: e.target.value });
+        }
     };
 
     const handleBillingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setBillingAddress({ ...billingAddress, [e.target.name]: e.target.value });
+        if (e.target.name === 'phone') {
+            const val = e.target.value.replace(/\D/g, '');
+            if (val.length <= 10) setBillingAddress({ ...billingAddress, phone: val });
+        } else {
+            setBillingAddress({ ...billingAddress, [e.target.name]: e.target.value });
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setShowConfirmation(true);
+    };
+
+    const handleProcessPayment = async () => {
         const finalBillingAddress = sameAsShipping ? shippingAddress : billingAddress;
+
+        // Generate Order ID locally
+        const orderId = `ORD-${Date.now()}`;
 
         const orderData = {
             shippingAddress,
@@ -110,11 +133,31 @@ export default function CheckoutPage() {
             orderNotes,
             items: cartItems,
             totals: { cartTotal, shippingCost, taxAmount, grandTotal },
-            paymentMethod: 'Online'
+            paymentMethod: 'Online',
+            userId: userId || 'guest', // Will resolve guest logic after payment
+            orderDate: new Date().toISOString(),
+            orderid: orderId,
+            id: orderId,
+            username: finalBillingAddress.name,
+            useremail: finalBillingAddress.email,
+            userphone: finalBillingAddress.phone
         };
+        console.log("tempOrderData", orderData);
+        // Store order data temporarily for Payment Page
+        secureLocalStorage.setItem('tempOrderData', orderData);
 
-        console.log("Order Submitted:", orderData);
-        alert("Order placed successfully! (Mock)");
+        setShowConfirmation(false);
+
+        // Redirect to Payment Page
+        const params = new URLSearchParams({
+            amount: grandTotal.toString(),
+            orderid: orderId,
+            name: finalBillingAddress.name,
+            email: finalBillingAddress.email,
+            phone: finalBillingAddress.phone
+        });
+
+        window.location.href = `/shop/payment?${params.toString()}`;
     };
 
     if (cartItems.length === 0) {
@@ -128,8 +171,10 @@ export default function CheckoutPage() {
         );
     }
 
+    const finalBillingAddress = sameAsShipping ? shippingAddress : billingAddress;
+
     return (
-        <div className="container-custom py-12">
+        <div className="container-custom py-12 relative">
             <h1 className="text-3xl font-heading font-bold mb-8 text-center lg:text-left">Checkout</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col lg:flex-row gap-12">
@@ -145,7 +190,18 @@ export default function CheckoutPage() {
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <InputField label="Full Name" name="name" value={shippingAddress.name} onChange={handleShippingChange} placeholder="e.g. John Doe" required={true} />
-                            <InputField label="Phone Number" name="phone" value={shippingAddress.phone} onChange={handleShippingChange} placeholder="e.g. 9876543210" required={true} />
+                            <InputField
+                                label="Phone Number"
+                                name="phone"
+                                type="tel"
+                                inputMode="numeric"
+                                pattern="[0-9]{10}"
+                                maxLength={10}
+                                value={shippingAddress.phone}
+                                onChange={handleShippingChange}
+                                placeholder="e.g. 9876543210"
+                                required={true}
+                            />
                             <InputField label="Email Address" name="email" type="email" value={shippingAddress.email} onChange={handleShippingChange} placeholder="e.g. john@example.com" className="md:col-span-2" required={true} />
                             <InputField label="Address" name="address" value={shippingAddress.address} onChange={handleShippingChange} placeholder="House No, Street, Area" className="md:col-span-2" required={true} />
                             <InputField label="City" name="city" value={shippingAddress.city} onChange={handleShippingChange} placeholder="e.g. Bengaluru" required={true} />
@@ -174,7 +230,18 @@ export default function CheckoutPage() {
                         {!sameAsShipping && (
                             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6 animate-fadeIn">
                                 <InputField label="Full Name" name="name" value={billingAddress.name} onChange={handleBillingChange} placeholder="e.g. John Doe" required={true} />
-                                <InputField label="Phone Number" name="phone" value={billingAddress.phone} onChange={handleBillingChange} placeholder="e.g. 9876543210" required={true} />
+                                <InputField
+                                    label="Phone Number"
+                                    name="phone"
+                                    type="tel"
+                                    inputMode="numeric"
+                                    pattern="[0-9]{10}"
+                                    maxLength={10}
+                                    value={billingAddress.phone}
+                                    onChange={handleBillingChange}
+                                    placeholder="e.g. 9876543210"
+                                    required={true}
+                                />
                                 <InputField label="Email Address" name="email" type="email" value={billingAddress.email} onChange={handleBillingChange} placeholder="e.g. john@example.com" className="md:col-span-2" required={true} />
                                 <InputField label="Address" name="address" value={billingAddress.address} onChange={handleBillingChange} placeholder="House No, Street, Area" className="md:col-span-2" required={true} />
                                 <InputField label="City" name="city" value={billingAddress.city} onChange={handleBillingChange} placeholder="e.g. Bengaluru" required={true} />
@@ -256,11 +323,106 @@ export default function CheckoutPage() {
                         </div>
 
                         <button type="submit" className="btn btn-primary w-full mt-6 py-4 shadow-lg hover:shadow-xl transition-all">
-                            Place Order
+                            Proceed to Confirm
                         </button>
                     </div>
                 </div>
             </form>
+
+            {/* Confirmation Modal */}
+            {showConfirmation && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+                    <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl relative animate-slideUp">
+
+                        <div className="sticky top-0 bg-white border-b border-gray-100 p-6 flex justify-between items-center z-10">
+                            <h2 className="text-xl font-bold font-heading text-gray-900">Confirm Your Order</h2>
+                            <button onClick={() => setShowConfirmation(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                                <span className="text-2xl leading-none">&times;</span>
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-6">
+
+                            {/* User Info */}
+                            <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wide mb-3">Customer Details</h3>
+                                <div className="grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span className="block text-gray-500 text-xs">Name</span>
+                                        <span className="font-medium text-gray-900">{userId ? shippingAddress.name : finalBillingAddress.name}</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-gray-500 text-xs">Email</span>
+                                        <span className="font-medium text-gray-900">{userId ? shippingAddress.email : finalBillingAddress.email}</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-gray-500 text-xs">Phone</span>
+                                        <span className="font-medium text-gray-900">{userId ? shippingAddress.phone : finalBillingAddress.phone}</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-gray-500 text-xs">User Type</span>
+                                        <span className="font-medium text-gray-900">{userId ? `Registered (${userId.substring(0, 6)}...)` : 'Guest Checkout'}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Shipping */}
+                                <div className="border border-gray-100 rounded-xl p-4">
+                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Shipping To</h3>
+                                    <p className="text-sm text-gray-700 leading-relaxed">
+                                        <span className="font-bold block text-gray-900 mb-1">{shippingAddress.name}</span>
+                                        {shippingAddress.address}<br />
+                                        {shippingAddress.city}, {shippingAddress.state}<br />
+                                        {shippingAddress.pincode}<br />
+                                        Phone: {shippingAddress.phone}
+                                    </p>
+                                </div>
+
+                                {/* Billing */}
+                                <div className="border border-gray-100 rounded-xl p-4">
+                                    <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wide mb-3">Billing Address</h3>
+                                    <p className="text-sm text-gray-700 leading-relaxed">
+                                        <span className="font-bold block text-gray-900 mb-1">{finalBillingAddress.name}</span>
+                                        {finalBillingAddress.address}<br />
+                                        {finalBillingAddress.city}, {finalBillingAddress.state}<br />
+                                        {finalBillingAddress.pincode}<br />
+                                        Phone: {finalBillingAddress.phone}
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Payment Summary */}
+                            <div className="bg-gray-50 p-6 rounded-xl border border-gray-200">
+                                <div className="flex justify-between items-center mb-2 text-sm text-gray-600">
+                                    <span>Date</span>
+                                    <span>{new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).replace(/ /g, '-')}</span>
+                                </div>
+                                <div className="flex justify-between items-center border-t border-gray-200 pt-4 mt-2">
+                                    <span className="text-lg font-bold text-gray-900">Total Payable Amount</span>
+                                    <span className="text-2xl font-bold text-primary">₹{grandTotal.toFixed(2)}</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div className="p-6 border-t border-gray-100 bg-gray-50 flex flex-col-reverse md:flex-row gap-4 justify-end">
+                            <button
+                                onClick={() => setShowConfirmation(false)}
+                                className="px-6 py-3 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-gray-100 transition-colors"
+                            >
+                                Cancel / Edit
+                            </button>
+                            <button
+                                onClick={handleProcessPayment}
+                                className="px-8 py-3 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                            >
+                                Process to Payment ₹{grandTotal.toFixed(2)}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </div>
     );
