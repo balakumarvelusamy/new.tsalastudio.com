@@ -14,6 +14,7 @@ export default function AdminSidebar() {
         { name: 'Slider', href: '/admin/slider', icon: PhotoIcon },
         { name: 'Courses', href: '/admin/course', icon: BookOpenIcon },
         { name: 'Products', href: '/admin/product', icon: ShoppingBagIcon },
+        { name: 'Orders', href: '/admin/order', icon: ShoppingBagIcon },
         // { name: 'Migration', href: '/admin/migrate', icon: ArrowPathIcon },
         { name: 'Newsletter', href: '/admin/newsletter', icon: DocumentTextIcon }, // Reusing Icon for now or import EnvelopeIcon
         { name: 'Blog', href: '/admin/blog', icon: BookOpenIcon },

@@ -24,6 +24,7 @@ interface CartContextType {
     shippingCost: number;
     taxAmount: number;
     grandTotal: number;
+    userId: string | null;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -179,22 +180,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         }
     };
 
-    const clearCart = () => {
-        // If user, we might want to delete all.
-        // Since we don't have a "delete all by filter" API easily exposed in client snippet,
-        // we might have to loop delete or just clear local and let server be stale? 
-        // No, server must be cleared.
-        if (userId) {
-            // Optimistic clear
-            const itemsToDelete = [...cartItems];
-            setCartItems([]);
+    const clearCart = async () => {
+        setCartItems([]); // Optimistic UI clear
 
-            // Background delete
-            itemsToDelete.forEach(item => {
-                deleteItem(`cart-${userId}-${item.id}`).catch(console.error);
-            });
-        } else {
-            setCartItems([]);
+        if (userId) {
+            try {
+                // Fetch all cart items for this user from DB to ensure we get everything
+                const serverItems = await filterItems('userid', userId, 'type', 'cart');
+
+                if (serverItems && Array.isArray(serverItems)) {
+                    // Execute deletions in parallel
+                    await Promise.all(serverItems.map((item: any) =>
+                        deleteItem(item.id).catch((err) => console.error(`Failed to delete item ${item.id}`, err))
+                    ));
+                    console.log("Cart cleared from server for user:", userId);
+                }
+            } catch (error) {
+                console.error("Error clearing server cart:", error);
+            }
         }
     };
 
@@ -210,7 +213,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const grandTotal = cartTotal + shippingCost + taxAmount;
 
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartTotal, shippingCost, taxAmount, grandTotal }}>
+        <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartTotal, shippingCost, taxAmount, grandTotal, userId }}>
             {children}
         </CartContext.Provider>
     );
