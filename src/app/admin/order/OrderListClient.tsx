@@ -136,7 +136,7 @@ export default function OrderListClient({ initialOrders }: { initialOrders: any[
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                         {filteredOrders.length === 0 ? (
-                            <tr>
+                            <tr key="empty-state">
                                 <td colSpan={7} className="px-6 py-8 text-center text-gray-500">
                                     No orders found.
                                 </td>
@@ -326,20 +326,17 @@ export default function OrderListClient({ initialOrders }: { initialOrders: any[
                                         </tbody>
                                         <tfoot className="bg-gray-50/50 text-sm font-medium">
                                             <tr>
-                                                <td colSpan={3} className="px-6 py-3 text-right text-gray-500">Subtotal</td>
-                                                <td className="px-6 py-3 text-right">₹{selectedOrder.totals?.cartTotal?.toFixed(2)}</td>
+                                                <td colSpan={4} className="px-6 py-3 text-right text-gray-600 space-x-4">
+                                                    <span>Subtotal: <strong>₹{selectedOrder.totals?.cartTotal?.toFixed(2)}</strong></span>
+                                                    <span>|</span>
+                                                    <span>Shipping: <strong>₹{selectedOrder.totals?.shippingCost?.toFixed(2)}</strong></span>
+                                                    <span>|</span>
+                                                    <span>Tax: <strong>₹{selectedOrder.totals?.taxAmount?.toFixed(2)}</strong></span>
+                                                </td>
                                             </tr>
-                                            <tr>
-                                                <td colSpan={3} className="px-6 py-3 text-right text-gray-500">Shipping</td>
-                                                <td className="px-6 py-3 text-right">₹{selectedOrder.totals?.shippingCost?.toFixed(2)}</td>
-                                            </tr>
-                                            <tr>
-                                                <td colSpan={3} className="px-6 py-3 text-right text-gray-500">Tax</td>
-                                                <td className="px-6 py-3 text-right">₹{selectedOrder.totals?.taxAmount?.toFixed(2)}</td>
-                                            </tr>
-                                            <tr className="text-primary font-bold text-base">
-                                                <td colSpan={3} className="px-6 py-4 text-right">Grand Total</td>
-                                                <td className="px-6 py-4 text-right">₹{selectedOrder.totals?.grandTotal?.toFixed(2)}</td>
+                                            <tr className="border-t border-gray-200 text-base">
+                                                <td colSpan={3} className="px-6 py-3 text-right font-bold text-gray-900">Grand Total</td>
+                                                <td className="px-6 py-3 text-right font-bold text-primary">₹{selectedOrder.totals?.grandTotal?.toFixed(2)}</td>
                                             </tr>
                                         </tfoot>
                                     </table>

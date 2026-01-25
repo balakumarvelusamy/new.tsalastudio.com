@@ -25,7 +25,7 @@ function SuccessContent() {
                 <Link href="/shop" className="btn btn-primary px-8">
                     Continue Shopping
                 </Link>
-                <Link href="/shop/profile" className="btn bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-8">
+                <Link href="/shop/orders" className="btn bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-8">
                     View My Orders
                 </Link>
             </div>

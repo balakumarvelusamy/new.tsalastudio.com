@@ -5,6 +5,7 @@ import config from '../../../config.json';
 import { getItemsByType, getItemBySlug } from '../../../services/api';
 import { Metadata } from 'next';
 import BlurImage from '../../../components/Element/BlurImage';
+import CoursePaymentButton from '../../../components/Course/CoursePaymentButton';
 
 type Props = {
     params: Promise<{ slug: string }>;
@@ -131,14 +132,17 @@ export default async function CourseDetailPage({ params }: Props) {
                                     </div>
 
                                     <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-gray-100 pt-8">
-                                        <a
-                                            href={`https://wa.me/919880162266?text=Hi, I am interested in the ${course.posttitle} course.`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="btn bg-green-500 text-white hover:bg-green-600 border-none text-center"
-                                        >
-                                            Chat on WhatsApp
-                                        </a>
+                                        <div className="flex flex-col sm:flex-row gap-4">
+                                            <CoursePaymentButton course={course} className="!px-8 !py-3 text-base" />
+                                            <a
+                                                href={`https://wa.me/919880162266?text=Hi, I am interested in the ${course.posttitle} course.`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="btn bg-green-500 text-white hover:bg-green-600 border-none text-center px-6 py-3 rounded-full font-bold flex items-center gap-2"
+                                            >
+                                                <span>Chat on WhatsApp</span>
+                                            </a>
+                                        </div>
 
                                         {/* Share Buttons */}
                                         <div className="flex items-center gap-4">

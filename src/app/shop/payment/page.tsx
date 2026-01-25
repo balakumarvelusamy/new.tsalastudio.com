@@ -8,6 +8,8 @@ import { useCart } from '../../../context/CartContext';
 import { saveItem, filterItems } from '../../../services/api';
 import secureLocalStorage from 'react-secure-storage';
 
+import { decryptParams } from '../../../utils/encryption';
+
 // declare global razorpay
 declare global {
     interface Window {
@@ -22,11 +24,69 @@ function PaymentContent() {
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState<'pending' | 'processing' | 'success' | 'failed'>('pending');
 
-    const amount = searchParams.get('amount') || '0';
-    const orderId = searchParams.get('orderid') || '';
-    const name = searchParams.get('name') || '';
-    const email = searchParams.get('email') || '';
-    const phone = searchParams.get('phone') || '';
+    // Decrypt Params
+    const encryptedData = searchParams.get('q');
+    let decryptedParams: any = {};
+
+    if (encryptedData) {
+        decryptedParams = decryptParams(encryptedData) || {};
+    } else {
+        // Fallback for legacy/direct support (optional, or we can block it)
+        // For now, allow direct if q is missing but warn/block in production if strict.
+        decryptedParams = {
+            amount: searchParams.get('amount'),
+            orderid: searchParams.get('orderid'),
+            name: searchParams.get('name'),
+            email: searchParams.get('email'),
+            phone: searchParams.get('phone')
+        };
+    }
+
+    const amount = decryptedParams.amount || '0';
+    const orderId = decryptedParams.orderid || '';
+    const name = decryptedParams.name || '';
+    const email = decryptedParams.email || '';
+    const phone = decryptedParams.phone || '';
+
+    const [isValid, setIsValid] = useState(false);
+
+    // Verify against local storage sanity check (Anti-tamper)
+    useEffect(() => {
+        const checkSecurity = () => {
+            try {
+                const temp = secureLocalStorage.getItem('tempOrderData') as any;
+
+                // If no local data, we can't verify, so purely redundant security: fail safe or strict?
+                // Strict: If user has no local data, they shouldn't be here (session lost or deep link).
+                if (!temp || temp.id !== orderId) {
+                    console.error("Security Alert: No matching local order data found.");
+                    alert("Security Error: Order session expired or invalid. Please restart checkout.");
+                    router.push('/shop/checkout');
+                    return;
+                }
+
+                const localAmount = temp.totals?.grandTotal?.toString();
+
+                // Allow small floating point diff
+                if (localAmount && Math.abs(parseFloat(localAmount) - parseFloat(amount)) > 1) {
+                    console.error("Security Alert: Price Mismatch!", "URL:", amount, "Local:", localAmount);
+                    alert("Security Error: Payment amount mismatch detected. Please restart checkout.");
+                    router.push('/shop/checkout');
+                    return;
+                }
+
+                // Passed checks
+                setIsValid(true);
+            } catch (e) {
+                console.error("Security check error", e);
+                router.push('/shop/checkout');
+            }
+        };
+
+        if (orderId && amount) {
+            checkSecurity();
+        }
+    }, [amount, orderId, router]);
 
     // Load Razorpay Script
     const loadScript = (src: string) => {
@@ -159,9 +219,9 @@ function PaymentContent() {
 
                         setStatus('success');
 
-                        // Send Email
+                        // Send Email (Non-blocking)
                         if (finalOrderPayload) {
-                            await sendEmail(name, email, orderId, "Received", "Completed", finalOrderPayload);
+                            sendEmail(name, email, orderId, "Received", "Completed", finalOrderPayload).catch(console.error);
                         }
 
                         router.push('/shop/success?orderid=' + orderId);
@@ -325,7 +385,7 @@ function PaymentContent() {
 
                     <button
                         onClick={handlePayment}
-                        disabled={loading || status === 'success'}
+                        disabled={loading || status === 'success' || !isValid}
                         className="btn btn-primary w-full py-4 text-lg shadow-lg hover:shadow-xl transition-all disabled:opacity-70 disabled:cursor-not-allowed"
                     >
                         {loading ? 'Processing...' : 'Pay Now Securely'}

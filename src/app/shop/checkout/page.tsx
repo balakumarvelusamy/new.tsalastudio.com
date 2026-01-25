@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '../../../context/CartContext';
 import Link from 'next/link';
 import config from '../../../config.json';
-import { getItemsById } from '../../../services/api';
+import { getItemsById, getItemsByType, filterItems } from '../../../services/api';
 import secureLocalStorage from 'react-secure-storage';
+import { encryptParams } from '../../../utils/encryption';
 
 interface AddressForm {
     name: string;
@@ -37,7 +38,7 @@ const InputField = ({ label, name, type = "text", value, onChange, placeholder, 
 );
 
 export default function CheckoutPage() {
-    const { cartItems, cartTotal, shippingCost, taxAmount, grandTotal } = useCart();
+    const { cartItems, cartTotal, shippingCost, taxAmount, grandTotal, userId: contextUserId } = useCart();
     const [showConfirmation, setShowConfirmation] = useState(false);
     const [userId, setUserId] = useState<string | null>(null);
 
@@ -54,47 +55,89 @@ export default function CheckoutPage() {
     const [orderNotes, setOrderNotes] = useState('');
 
     // Pre-fill user data
+    // Pre-fill user data
     useEffect(() => {
+        let attempts = 0;
+        const maxAttempts = 10;
+
         const fetchUserData = async () => {
-            // Safe secure storage access
-            let uuid = null;
-            try {
-                if (typeof window !== 'undefined') {
-                    uuid = secureLocalStorage.getItem('tsalauuid') as string;
-                    if (uuid) setUserId(uuid);
+            let foundUuid: string | null = contextUserId;
+
+            if (!foundUuid && typeof window !== 'undefined') {
+                try {
+                    foundUuid = secureLocalStorage.getItem('tsalauuid') as string;
+                    if (!foundUuid) foundUuid = localStorage.getItem('tsalauuid');
+                } catch (e) {
+                    console.error("Storage access error:", e);
                 }
-            } catch (e) {
-                console.error("Error accessing secure storage", e);
             }
 
-            if (uuid) {
-                try {
-                    const data = await getItemsById(uuid);
-                    if (data) {
-                        // Robustly handle array or object return
-                        const user = Array.isArray(data) ? (data.length > 0 ? data[0] : null) : data;
-
-                        if (user) {
-                            setShippingAddress(prev => ({
-                                ...prev,
-                                name: user.name || '',
-                                email: user.email || '',
-                                phone: user.phonenumber || user.phone || '', // Handle varied keys
-                                address: user.address || '',
-                                city: user.city || '',
-                                state: user.state || '',
-                                pincode: user.pincode || ''
-                            }));
-                        }
-                    }
-                } catch (error) {
-                    console.error("Failed to fetch user details for auto-fill:", error);
+            if (foundUuid) {
+                if (foundUuid !== userId) {
+                    setUserId(foundUuid);
                 }
+
+                try {
+                    // Strict: Use getItemsById(userid)
+                    const response = await getItemsById(foundUuid);
+                    console.log("Auto-fill: Raw API Response", response);
+
+                    // Handle response: Filter for type === 'user'
+                    let userData = null;
+
+                    // Helper to identify user object
+                    const isUserObject = (item: any) => {
+                        // Strict check
+                        if (item.type === 'user' || item.type === 'User') return true;
+                        // Heuristic check (if type is missing or vague)
+                        // User has email/name/phone but NOT productid/quantity/price (typically)
+                        if ((item.email || item.useremail) && !item.price && !item.quantity) return true;
+                        return false;
+                    };
+
+                    if (Array.isArray(response)) {
+                        userData = response.find(isUserObject);
+                        // If still not found, just take the first one that looks like a user? 
+                        // Or maybe the user reported cart data because they just saw the first item.
+                    } else if (response) {
+                        if (isUserObject(response)) userData = response;
+                    }
+
+                    if (userData) {
+                        console.log("Auto-fill: User Profile matched", userData);
+
+                        const mappedAddress = {
+                            name: userData.name || userData.username || '',
+                            email: userData.email || userData.useremail || '',
+                            phone: userData.phone || userData.phonenumber || userData.mobile || '',
+                            address: userData.address || '',
+                            city: userData.city || '',
+                            state: userData.state || '',
+                            pincode: userData.pincode || userData.zip || ''
+                        };
+
+                        setShippingAddress(prev => ({ ...prev, ...mappedAddress }));
+                        setBillingAddress(prev => ({ ...prev, ...mappedAddress }));
+                        return true;
+                    }
+                } catch (err) {
+                    console.error("Auto-fill: Failed to fetch user profile", err);
+                }
+                return true;
+            }
+            return false;
+        };
+
+        const attemptFetch = async () => {
+            const success = await fetchUserData();
+            if (!success && attempts < maxAttempts) {
+                attempts++;
+                setTimeout(attemptFetch, 500);
             }
         };
 
-        fetchUserData();
-    }, []);
+        attemptFetch();
+    }, [contextUserId]);
 
 
     // Handle Input Change
@@ -149,15 +192,19 @@ export default function CheckoutPage() {
         setShowConfirmation(false);
 
         // Redirect to Payment Page
-        const params = new URLSearchParams({
+        // Redirect to Payment Page
+        const rawParams = {
             amount: grandTotal.toString(),
             orderid: orderId,
             name: finalBillingAddress.name,
             email: finalBillingAddress.email,
             phone: finalBillingAddress.phone
-        });
+        };
 
-        window.location.href = `/shop/payment?${params.toString()}`;
+        const encryptedData = encryptParams(rawParams);
+
+        // We use 'q' as the query param for the encrypted payload
+        window.location.href = `/shop/payment?q=${encodeURIComponent(encryptedData)}`;
     };
 
     if (cartItems.length === 0) {

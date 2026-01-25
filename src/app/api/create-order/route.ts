@@ -29,14 +29,18 @@ export async function POST(request: NextRequest) {
         });
 
         // Parse body if available to get amount
-        let amount = 100 * 100; // Default
+        let amount = 0;
         try {
             const body = await request.json();
             if (body.amount) {
                 amount = body.amount;
             }
         } catch (e) {
-            // Ignore JSON parse error, use default
+            // Ignore JSON parse error
+        }
+
+        if (!amount || amount <= 0) {
+            throw new Error("Invalid or missing amount.");
         }
 
         const receipt = "receipt_" + Math.random().toString(36).substring(7);

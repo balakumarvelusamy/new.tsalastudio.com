@@ -5,6 +5,7 @@ import config from '../../config.json';
 import { getItemsByType } from '../../services/api';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 import BlurImage from '../../components/Element/BlurImage';
+import CoursePaymentButton from '../../components/Course/CoursePaymentButton';
 
 export const metadata = {
     title: 'Our Courses | Tsala Studio',
@@ -87,10 +88,10 @@ export default async function CoursesPage(props: { searchParams: Promise<{ q?: s
                     {/* Courses Grid */}
                     {paginatedCourses.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                            {paginatedCourses.map((course: any) => (
+                            {paginatedCourses.map((course: any, index: number) => (
                                 <Link
                                     href={`/courses/${course.slug}`}
-                                    key={course.post_id}
+                                    key={course.id || course.post_id || index}
                                     className="block group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 h-full flex flex-col"
                                 >
                                     <div className="h-60 overflow-hidden relative">
@@ -129,9 +130,11 @@ export default async function CoursesPage(props: { searchParams: Promise<{ q?: s
                                             dangerouslySetInnerHTML={{ __html: course.postcontent }}
                                         />
                                         <div className="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
-                                            <span className="text-sm text-gray-400">{course.displaydate}</span>
+                                            <div className="flex items-center gap-2">
+                                                <CoursePaymentButton course={course} />
+                                            </div>
                                             <span className="text-primary font-bold text-sm group-hover:translate-x-1 transition-transform">
-                                                View Details &rarr;
+                                                details &rarr;
                                             </span>
                                         </div>
                                     </div>
