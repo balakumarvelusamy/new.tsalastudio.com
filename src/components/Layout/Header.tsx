@@ -86,7 +86,7 @@ const Header = () => {
                                 const form = e.target as HTMLFormElement;
                                 const query = (form.elements.namedItem('q') as HTMLInputElement).value;
                                 if (query.trim()) {
-                                    router.push(`/courses?q=${encodeURIComponent(query)}`);
+                                    router.push(`/search?q=${encodeURIComponent(query)}`);
                                 }
                             }}
                             className="hidden md:block relative"
