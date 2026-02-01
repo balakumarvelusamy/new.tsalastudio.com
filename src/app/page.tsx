@@ -22,21 +22,27 @@ async function getCategories() {
       subtitle: "Longarm Quilting",
       imageurl: config.slider[0].image_url,
       category: "Service",
-      type: "Service"
+      type: "Service",
+      button_text: "Know More",
+      button_url: "/about"
     },
     {
       title: "Fabrics",
-      subtitle: "Premium Cotton",
+      subtitle: "100% Quilting Cotton",
       imageurl: config.slider[1].image_url,
-      category: "Fabric",
-      type: "Product"
+      category: "",
+      type: "Product",
+      button_text: "Shop Now",
+      button_url: "/shop"
     },
     {
-      title: "Workshops",
-      subtitle: "Learn New Skills",
+      title: "Kits",
+      subtitle: "DIY kits for quilting & Bags",
       imageurl: config.slider[1].image_url,
-      category: "course",
-      type: "Course"
+      category: "",
+      type: "Product",
+      button_text: "Shop Now",
+      button_url: "/shop"
     }
   ];
 }

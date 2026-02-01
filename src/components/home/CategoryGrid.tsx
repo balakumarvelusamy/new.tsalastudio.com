@@ -37,8 +37,8 @@ const CategoryGrid = ({ categories }: { categories: Category[] }) => {
                                             View Courses
                                         </Link>
                                     ) : (
-                                        <Link href={`/shop?category=${cat.category}`} className="inline-block px-2 py-1 md:px-5 md:py-2 bg-white text-primary text-[10px] md:text-xs font-bold uppercase tracking-wider rounded-full hover:bg-secondary hover:text-white transition-colors shadow-lg">
-                                            Shop Now
+                                        <Link href={cat.button_url} className="inline-block px-2 py-1 md:px-5 md:py-2 bg-white text-primary text-[10px] md:text-xs font-bold uppercase tracking-wider rounded-full hover:bg-secondary hover:text-white transition-colors shadow-lg">
+                                            {cat.button_text}
                                         </Link>
                                     )}
                                 </div>

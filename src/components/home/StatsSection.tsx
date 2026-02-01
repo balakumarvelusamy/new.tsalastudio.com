@@ -6,7 +6,7 @@ import { useInView } from 'react-intersection-observer';
 const stats = [
     { label: 'Years of Experience', value: 10, suffix: '+' },
     { label: 'Awards Won', value: 10, suffix: '' },
-    { label: 'Happy Clients', value: 100, suffix: '+' },
+    { label: 'Happy Clients', value: 1000, suffix: '+' },
 ];
 
 const StatsSection = () => {
@@ -19,7 +19,7 @@ const StatsSection = () => {
         <section className="py-20 bg-primary text-white" ref={ref}>
             <div className="container-custom">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-heading font-bold text-white">Professional Skills</h2>
+                    <h2 className="text-3xl font-heading font-bold text-white">Milestones</h2>
                     <p className="text-indigo-200 mt-2">More than 1000+ customers trusted us</p>
                 </div>
 

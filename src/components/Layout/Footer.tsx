@@ -22,19 +22,32 @@ const Footer = () => {
                         <ul className="space-y-4 text-gray-300">
                             <li className="flex items-start gap-3">
                                 <span className="mt-1">📍</span>
-                                <p>{config.contact_address}</p>
+                                <a
+                                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(config.contact_address)}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="hover:text-secondary transition-colors"
+                                >
+                                    {config.contact_address}
+                                </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 <span>📞</span>
-                                <p>{config.contact_phone1}</p>
+                                <a href={`tel:${config.contact_phone1}`} className="hover:text-secondary transition-colors">
+                                    {config.contact_phone1}
+                                </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 <span>📱</span>
-                                <p>{config.contact_phone2}</p>
+                                <a href={`tel:${config.contact_phone2}`} className="hover:text-secondary transition-colors">
+                                    {config.contact_phone2}
+                                </a>
                             </li>
                             <li className="flex items-center gap-3">
                                 <span>✉️</span>
-                                <p className="lowercase">{config.contact_email}</p>
+                                <a href={`mailto:${config.contact_email}`} className="lowercase hover:text-secondary transition-colors">
+                                    {config.contact_email}
+                                </a>
                             </li>
                         </ul>
                     </div>
@@ -82,15 +95,15 @@ const Footer = () => {
                         <h5 className="text-lg font-heading font-bold mb-4">Opening Hours</h5>
                         <ul className="space-y-2 text-gray-300 text-sm">
                             <li className="flex justify-between">
-                                <span>Mon - Fri</span>
-                                <span>10AM - 6PM</span>
-                            </li>
-                            <li className="flex justify-between">
-                                <span>Saturday</span>
-                                <span>By Appointment</span>
+                                <span>Mon - Sat</span>
+                                <span>10AM - 5PM</span>
                             </li>
                             <li className="flex justify-between">
                                 <span>Sunday</span>
+                                <span>Closed</span>
+                            </li>
+                            <li className="flex justify-between">
+                                <span>National & Public Holidays</span>
                                 <span>Closed</span>
                             </li>
                         </ul>
