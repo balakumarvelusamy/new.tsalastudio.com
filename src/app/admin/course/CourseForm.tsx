@@ -39,7 +39,7 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
         published: initialData?.published ?? 1,
         isregistrationopen: initialData?.isregistrationopen ?? 0,
         // Hidden/System fields
-        type: 'course',
+        type: initialData?.type || 'course',
         id: initialData?.id || initialData?.post_id || crypto.randomUUID(),
         createdby: initialData?.createdby || 'Admin',
         createddate: initialData?.createddate || new Date().toISOString(),
@@ -209,6 +209,20 @@ export default function CourseForm({ initialData, isEditMode = false, onSuccess,
                         className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all bg-gray-50"
                         placeholder="Auto-generated from title"
                     />
+                </div>
+
+                {/* Type Selection */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Type</label>
+                    <select
+                        name="type"
+                        value={formData.type}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all"
+                    >
+                        <option value="course">Course</option>
+                        <option value="workshop">Workshop</option>
+                    </select>
                 </div>
 
                 {/* Category Dropdown */}
