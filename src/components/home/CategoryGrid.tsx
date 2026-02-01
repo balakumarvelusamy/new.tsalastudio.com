@@ -7,6 +7,8 @@ interface Category {
     imageurl: string;
     category: string;
     type: string;
+    button_url?: string;
+    button_text?: string;
 }
 
 const CategoryGrid = ({ categories }: { categories: Category[] }) => {
@@ -37,7 +39,7 @@ const CategoryGrid = ({ categories }: { categories: Category[] }) => {
                                             View Courses
                                         </Link>
                                     ) : (
-                                        <Link href={cat.button_url} className="inline-block px-2 py-1 md:px-5 md:py-2 bg-white text-primary text-[10px] md:text-xs font-bold uppercase tracking-wider rounded-full hover:bg-secondary hover:text-white transition-colors shadow-lg">
+                                        <Link href={cat.button_url || '#'} className="inline-block px-2 py-1 md:px-5 md:py-2 bg-white text-primary text-[10px] md:text-xs font-bold uppercase tracking-wider rounded-full hover:bg-secondary hover:text-white transition-colors shadow-lg">
                                             {cat.button_text}
                                         </Link>
                                     )}
