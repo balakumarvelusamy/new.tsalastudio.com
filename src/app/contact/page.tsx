@@ -47,7 +47,14 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h6 className="font-bold text-gray-900 uppercase text-sm mb-1">Address</h6>
-                                    <p className="text-gray-600">{config.contact_address}</p>
+                                    <a
+                                        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(config.contact_address)}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-gray-600 hover:text-secondary transition-colors"
+                                    >
+                                        {config.contact_address}
+                                    </a>
                                 </div>
                             </div>
 
@@ -57,7 +64,9 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h6 className="font-bold text-gray-900 uppercase text-sm mb-1">Email</h6>
-                                    <p className="text-gray-600">{config.contact_email}</p>
+                                    <a href={`mailto:${config.contact_email}`} className="text-gray-600 hover:text-secondary transition-colors lowercase">
+                                        {config.contact_email}
+                                    </a>
                                 </div>
                             </div>
 
@@ -67,8 +76,12 @@ export default function ContactPage() {
                                 </div>
                                 <div>
                                     <h6 className="font-bold text-gray-900 uppercase text-sm mb-1">Phone</h6>
-                                    <p className="text-gray-600">{config.contact_phone1}</p>
-                                    <p className="text-gray-600">{config.contact_phone2}</p>
+                                    <a href={`tel:${config.contact_phone1}`} className="block text-gray-600 hover:text-secondary transition-colors">
+                                        {config.contact_phone1}
+                                    </a>
+                                    <a href={`tel:${config.contact_phone2}`} className="block text-gray-600 hover:text-secondary transition-colors">
+                                        {config.contact_phone2}
+                                    </a>
                                 </div>
                             </div>
                             <div className="flex items-start gap-4">

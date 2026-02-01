@@ -13,6 +13,7 @@ export default function AdminSidebar() {
         { name: 'Dashboard', href: '/admin', icon: HomeIcon },
         { name: 'Slider', href: '/admin/slider', icon: PhotoIcon },
         { name: 'Courses', href: '/admin/course', icon: BookOpenIcon },
+        { name: 'Workshops', href: '/admin/workshop', icon: BookOpenIcon },
         { name: 'Products', href: '/admin/product', icon: ShoppingBagIcon },
         { name: 'Orders', href: '/admin/order', icon: ShoppingBagIcon },
         // { name: 'Migration', href: '/admin/migrate', icon: ArrowPathIcon },
