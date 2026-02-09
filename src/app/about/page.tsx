@@ -1,32 +1,54 @@
-'use client';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import StatsSection from '@/components/home/StatsSection';
 import config from '../../config.json';
 import Link from 'next/link';
 import { getItemsById } from '../../services/api';
+import { Metadata } from 'next';
 
-export default function AboutPage() {
-    const [aboutData, setAboutData] = useState<any>(null);
-    const [loading, setLoading] = useState(true);
+export async function generateMetadata(): Promise<Metadata> {
+    let item = null;
+    try {
+        const aboutData = await getItemsById('about-us-main');
+        item = Array.isArray(aboutData) ? aboutData[0] : aboutData;
+    } catch (error) {
+        console.error("Metadata fetch error:", error);
+    }
 
-    useEffect(() => {
-        const fetchAbout = async () => {
-            try {
-                const data = await getItemsById('about-us-main');
-                if (data) {
-                    setAboutData(data);
-                }
-            } catch (error) {
-                console.error("Failed to fetch about data", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchAbout();
-    }, []);
+    const rawDescription = item?.description || config.aboutus_aboutpage;
+    // Strip HTML for meta description
+    const plainDescription = rawDescription.replace(/<[^>]*>?/gm, ' ').substring(0, 160).trim();
+    const imageUrl = item?.imageUrl || config.aboutus_imageurl2;
 
-    const description = aboutData[0]?.description;
-    const imageUrl = aboutData[0]?.imageUrl;
+    return {
+        title: 'About Us | Tsala Studio',
+        description: plainDescription,
+        openGraph: {
+            title: 'About Us | Tsala Studio',
+            description: plainDescription,
+            images: [
+                {
+                    url: imageUrl,
+                    width: 800,
+                    height: 600,
+                    alt: 'About Tsala Studio',
+                },
+            ],
+            type: 'website',
+        },
+    };
+}
+
+export default async function AboutPage() {
+    let item = null;
+    try {
+        const aboutData = await getItemsById('about-us-main');
+        item = Array.isArray(aboutData) ? aboutData[0] : aboutData;
+    } catch (error) {
+        console.error("About page fetch error:", error);
+    }
+
+    const description = item?.description || config.aboutus_aboutpage;
+    const imageUrl = item?.imageUrl || config.aboutus_imageurl2;
 
     return (
         <div>
@@ -58,7 +80,7 @@ export default function AboutPage() {
                             <img
                                 src={imageUrl}
                                 alt="About"
-                                className="w-auto h-80 object-cover rounded-[1rem] shadow-xl mx-auto"
+                                className="w-auto h-80 object-cover rounded-[2rem] shadow-xl mx-auto"
                             />
                         </div>
                         <div

@@ -33,12 +33,15 @@ export default function AdminAboutPage() {
                 ]);
 
                 if (data) {
-                    setFormData({
-                        id: 'about-us-main',
-                        type: 'about_content',
-                        description: data.description || '',
-                        imageUrl: data.imageUrl || ''
-                    });
+                    const item = Array.isArray(data) ? data[0] : data;
+                    if (item) {
+                        setFormData({
+                            id: 'about-us-main',
+                            type: 'about_content',
+                            description: item.description || '',
+                            imageUrl: item.imageUrl || ''
+                        });
+                    }
                 }
                 setSecret(secrets);
             } catch (error) {
@@ -191,7 +194,7 @@ export default function AdminAboutPage() {
                         {/* Live Preview */}
                         <div className="pt-8 border-t border-gray-100">
                             <h3 className="text-lg font-bold text-gray-900 mb-4">Live Preview</h3>
-                            <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+                            <div className="rounded-xl p-6 border border-gray-200">
                                 <div className="prose prose-lg max-w-none">
                                     {formData.imageUrl && (
                                         <div className="mb-6 flex justify-center">
