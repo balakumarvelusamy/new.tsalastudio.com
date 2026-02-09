@@ -17,6 +17,8 @@ interface SliderItem {
     isactive: string; // '1' or '0'
     createddate: string;
     type: string;
+    button_text?: string;
+    button_link?: string;
 }
 
 export default function SliderPage() {
@@ -91,7 +93,9 @@ export default function SliderPage() {
                 isactive: data.isactive ? '1' : '0',
                 type: SLIDER_TYPE,
                 createddate: editingItem ? editingItem.createddate : new Date().toISOString(),
-                updateddate: new Date().toISOString()
+                updateddate: new Date().toISOString(),
+                button_text: data.button_text,
+                button_link: data.button_link
             };
 
             await saveItem(payload);
@@ -121,6 +125,8 @@ export default function SliderPage() {
         setValue('description', item.description);
         setValue('prefix', item.prefix);
         setValue('isactive', item.isactive === '1');
+        setValue('button_text', item.button_text || '');
+        setValue('button_link', item.button_link || '/courses'); // Default fallback
         setImageFile(null);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -156,6 +162,29 @@ export default function SliderPage() {
                                 className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary outline-none"
                             />
                             {errors.title && <span className="text-red-500 text-xs">Title is required</span>}
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Button Name</label>
+                            <input
+                                {...register('button_text')}
+                                placeholder="e.g. Explore Courses"
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary outline-none"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Button Navigation Page</label>
+                            <select
+                                {...register('button_link')}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary outline-none"
+                            >
+                                <option value="/courses">Courses</option>
+                                <option value="/workshops">Workshops</option>
+                                <option value="/shop">Shop</option>
+                                <option value="/blog">Blog</option>
+                            </select>
                         </div>
                     </div>
 
@@ -255,6 +284,10 @@ export default function SliderPage() {
                                     <p className="text-xs text-secondary font-bold uppercase mb-1">{slide.prefix}</p>
                                     <h3 className="text-lg font-bold text-gray-900 mb-2 truncate">{slide.title}</h3>
                                     <p className="text-sm text-gray-500 line-clamp-2">{slide.description}</p>
+                                    <div className="mt-2 pt-2 border-t border-gray-100 flex justify-between text-xs text-gray-500">
+                                        <span>Btn: {slide.button_text || 'Default'}</span>
+                                        <span>Link: {slide.button_link || '/courses'}</span>
+                                    </div>
                                 </div>
                             </div>
                         ))}

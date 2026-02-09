@@ -152,10 +152,14 @@ export default function OrderListClient({ initialOrders }: { initialOrders: any[
                                         <div className="text-xs text-gray-400">{order.shippingAddress?.email}</div>
                                     </td>
                                     <td className="px-6 py-4 text-gray-500 text-sm whitespace-nowrap">
-                                        {new Date(order.orderDate).toLocaleDateString('en-IN', {
+                                        {new Date(order.orderDate || order.createddate).toLocaleString('en-IN', {
+                                            timeZone: 'Asia/Kolkata',
                                             day: 'numeric',
                                             month: 'short',
-                                            year: 'numeric'
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true
                                         })}
                                     </td>
                                     <td className="px-6 py-4 text-gray-900 font-medium text-sm">
@@ -201,7 +205,15 @@ export default function OrderListClient({ initialOrders }: { initialOrders: any[
                         <div className="sticky top-0 bg-white border-b border-gray-100 p-6 flex justify-between items-center z-10">
                             <div>
                                 <h2 className="text-xl font-bold font-heading text-gray-900">Order {selectedOrder.orderid}</h2>
-                                <p className="text-sm text-gray-500">Placed on {new Date(selectedOrder.orderDate).toLocaleString()}</p>
+                                <p className="text-sm text-gray-500">Placed on {new Date(selectedOrder.orderDate || selectedOrder.createddate).toLocaleString('en-IN', {
+                                    timeZone: 'Asia/Kolkata',
+                                    day: 'numeric',
+                                    month: 'short',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                    hour12: true
+                                })}</p>
                             </div>
                             <button onClick={closeOrder} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                                 <XMarkIcon className="w-6 h-6 text-gray-500" />

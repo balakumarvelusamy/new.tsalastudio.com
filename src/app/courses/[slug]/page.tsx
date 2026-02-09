@@ -133,7 +133,7 @@ export default async function CourseDetailPage({ params }: Props) {
 
                                     <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-between items-center border-t border-gray-100 pt-8">
                                         <div className="flex flex-col sm:flex-row gap-4">
-                                            <CoursePaymentButton course={course} className="!px-8 !py-3 text-base" />
+                                            <CoursePaymentButton course={course} className="!px-8 !py-3 text-base" itemType={course.itemtype || 'course'} />
                                             <a
                                                 href={`https://wa.me/919880162266?text=Hi, I am interested in the ${course.posttitle} course.`}
                                                 target="_blank"

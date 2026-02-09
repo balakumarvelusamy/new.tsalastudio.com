@@ -21,6 +21,7 @@ const Header = () => {
         { name: 'Rent Out Studio', href: '/rent-out-studio' },
         { name: 'About Us', href: '/about' },
         { name: 'Contact Us', href: '/contact' },
+        { name: 'Blog', href: '/blog' },
     ];
 
     const mobileVisibleItems = ['Home', 'Courses', 'Shop', 'Contact Us'];

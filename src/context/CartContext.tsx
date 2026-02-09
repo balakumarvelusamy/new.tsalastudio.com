@@ -11,6 +11,7 @@ export interface CartItem {
     image: string;
     price: number;
     quantity: number;
+    type?: string; // 'product', 'course', 'workshop'
 }
 
 interface CartContextType {
@@ -21,6 +22,7 @@ interface CartContextType {
     clearCart: () => void;
     cartCount: number;
     cartTotal: number;
+    shippableCartTotal: number; // Total value of items that attract shipping
     shippingCost: number;
     taxAmount: number;
     grandTotal: number;
@@ -63,7 +65,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                             name: item.name || 'Unknown Product',
                             image: item.image || '',
                             price: Number(item.price) || 0,
-                            quantity: Number(item.quantity) || 1
+                            quantity: Number(item.quantity) || 1,
+                            type: item.itemtype || 'product' // Retrieve saved type or default
                         };
                     }) : [];
 
@@ -138,7 +141,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                 name: product.name,
                 image: product.image,
                 price: product.price,
-                quantity: newQuantity
+                quantity: newQuantity,
+                itemtype: product.type // Save the item type
             };
 
             saveItem(cartItemPayload).catch(console.error);
@@ -173,7 +177,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
                     name: item.name,
                     image: item.image,
                     price: item.price,
-                    quantity: quantity
+                    quantity: quantity,
+                    itemtype: item.type // Preserve type
                 };
                 saveItem(cartItemPayload).catch(console.error);
             }
@@ -204,8 +209,20 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
     const cartTotal = cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
 
+    // Filter items that attract shipping
+    const shippableItems = cartItems.filter(item =>
+        !item.type || (item.type !== 'course' && item.type !== 'workshop')
+    );
+
+    // Calculate total value of shippable items
+    const shippableCartTotal = shippableItems.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+
     // Shipping Logic form Config
-    const shippingCost = cartTotal >= config.freeshippingcost ? 0 : config.shippingcost;
+    // Only apply shipping if there are shippable items and their total is less than threshold
+    // If no shippable items (e.g. only digital courses), shipping is 0.
+    const shippingCost = shippableItems.length > 0 && shippableCartTotal < config.freeshippingcost
+        ? config.shippingcost
+        : 0;
 
     // Tax Logic form Config
     const taxAmount = cartTotal * (config.taxpercentage / 100);
@@ -213,7 +230,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const grandTotal = cartTotal + shippingCost + taxAmount;
 
     return (
-        <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartTotal, shippingCost, taxAmount, grandTotal, userId }}>
+        <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartTotal, shippableCartTotal, shippingCost, taxAmount, grandTotal, userId }}>
             {children}
         </CartContext.Provider>
     );
