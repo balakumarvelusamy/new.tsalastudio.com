@@ -8,9 +8,10 @@ import { ShoppingCartIcon } from '@heroicons/react/24/outline';
 interface CoursePaymentButtonProps {
     course: any;
     className?: string; // Allow custom styling
+    itemType?: string; // NEW: Allow distinguishing between course/workshop
 }
 
-export default function CoursePaymentButton({ course, className = '' }: CoursePaymentButtonProps) {
+export default function CoursePaymentButton({ course, className = '', itemType = 'course' }: CoursePaymentButtonProps) {
     const router = useRouter();
     const { addToCart } = useCart();
 
@@ -37,8 +38,7 @@ export default function CoursePaymentButton({ course, className = '' }: CoursePa
             price: Number(course.price),
             image: course.post_image,
             quantity: 1,
-            // You might want to pass 'type: course' if your cart supports metadata, 
-            // but standard items work fine.
+            type: itemType || 'course' // Pass the type to cart
         });
 
         // Redirect to checkout

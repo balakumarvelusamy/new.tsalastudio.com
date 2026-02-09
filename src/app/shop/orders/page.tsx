@@ -21,7 +21,7 @@ export default function OrderHistoryPage() {
 
             try {
                 // Fetch orders for the logged-in user
-                const data = await filterItems('userid', uuid, 'type', 'order');
+                const data = await filterItems('userId', uuid, 'type', 'order');
 
                 // Sort by ID (usually implies newer first if ID is timestamp based, or just random. 
                 // Ideally sort by date if available. Assuming createddate is ISO string.)
@@ -85,18 +85,30 @@ export default function OrderHistoryPage() {
                                 <th className="p-4">Order ID</th>
                                 <th className="p-4">Date</th>
                                 <th className="p-4">Status</th>
-                                <th className="p-4">Shipping</th>
+
                                 <th className="p-4 text-right">Total</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
                             {orders.map((order) => (
-                                <tr key={order.id} className="hover:bg-gray-50/50 transition-colors">
-                                    <td className="p-4 font-medium text-gray-900">
+                                <tr
+                                    key={order.id}
+                                    className="hover:bg-gray-50 transition-colors cursor-pointer group"
+                                    onClick={() => router.push(`/shop/orders/${order.id}`)}
+                                >
+                                    <td className="p-4 font-medium text-gray-900 group-hover:text-primary transition-colors">
                                         <span title={order.id}>#{order.id.substring(0, 8)}...</span>
                                     </td>
                                     <td className="p-4 text-gray-600">
-                                        {new Date(order.createddate).toLocaleDateString()}
+                                        {new Date(order.orderDate || order.createddate).toLocaleString('en-IN', {
+                                            timeZone: 'Asia/Kolkata',
+                                            day: 'numeric',
+                                            month: 'short',
+                                            year: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: true
+                                        })}
                                     </td>
                                     <td className="p-4">
                                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize
@@ -106,17 +118,11 @@ export default function OrderHistoryPage() {
                                             {order.orderstatus || 'Pending'}
                                         </span>
                                     </td>
-                                    <td className="p-4">
-                                        <span className={`text-sm ${order.shippingstatus === 'shipped' ? 'text-green-600' : 'text-gray-500'}`}>
-                                            {order.shippingstatus || 'Processing'}
-                                        </span>
-                                    </td>
-                                    <td className="p-4 text-right font-bold text-gray-900">
-                                        {/* Assuming total is available in order object, otherwise calculate from items?? 
-                                        Usually order object matches checkout payload + computed fields. 
-                                        Let's assume 'grandTotal' or similar field exists. 
-                                        If not, we might need to inspect data structure. For now, defaulting to placeholder. */}
-                                        {order.grandTotal ? `₹${Number(order.grandTotal).toFixed(2)}` : '-'}
+
+                                    <td className="p-4 text-right">
+                                        <div className="font-bold text-gray-900">
+                                            {order.totals.grandTotal ? `₹${Number(order.totals.grandTotal).toFixed(2)}` : '-'}
+                                        </div>
                                     </td>
                                 </tr>
                             ))}
@@ -126,11 +132,21 @@ export default function OrderHistoryPage() {
                     {/* Mobile View */}
                     <div className="md:hidden divide-y divide-gray-100">
                         {orders.map((order) => (
-                            <div key={order.id} className="p-4 space-y-3">
+                            <Link href={`/shop/orders/${order.id}`} key={order.id} className="block p-4 space-y-3 hover:bg-gray-50 transition-colors">
                                 <div className="flex justify-between items-start">
                                     <div>
                                         <div className="font-bold text-gray-900">Order #{order.id.substring(0, 8)}...</div>
-                                        <div className="text-xs text-gray-500">{new Date(order.createddate).toLocaleDateString()}</div>
+                                        <div className="text-xs text-gray-500">
+                                            {new Date(order.orderDate || order.createddate).toLocaleString('en-IN', {
+                                                timeZone: 'Asia/Kolkata',
+                                                day: 'numeric',
+                                                month: 'short',
+                                                year: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                                hour12: true
+                                            })}
+                                        </div>
                                     </div>
                                     <div className="font-bold text-primary">
                                         {order.grandTotal ? `₹${Number(order.grandTotal).toFixed(2)}` : '-'}
@@ -144,11 +160,12 @@ export default function OrderHistoryPage() {
                                                 'bg-yellow-50 text-yellow-700 border border-yellow-100'}`}>
                                         {order.orderstatus || 'Pending'}
                                     </span>
-                                    <span className="text-gray-500">
+                                    <span className="text-gray-500 flex items-center gap-1">
                                         {order.shippingstatus || 'Processing'}
+                                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
                                     </span>
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>

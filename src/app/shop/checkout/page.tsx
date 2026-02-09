@@ -183,7 +183,8 @@ export default function CheckoutPage() {
             id: orderId,
             username: finalBillingAddress.name,
             useremail: finalBillingAddress.email,
-            userphone: finalBillingAddress.phone
+            userphone: finalBillingAddress.phone,
+            type: 'order'
         };
         console.log("tempOrderData", orderData);
         // Store order data temporarily for Payment Page

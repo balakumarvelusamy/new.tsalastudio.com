@@ -6,7 +6,7 @@ import Link from 'next/link';
 import config from '../../../config.json';
 
 export default function CartPage() {
-    const { cartItems, removeFromCart, updateQuantity, clearCart, cartTotal, shippingCost, taxAmount, grandTotal } = useCart();
+    const { cartItems, removeFromCart, updateQuantity, clearCart, cartTotal, shippableCartTotal, shippingCost, taxAmount, grandTotal } = useCart();
 
     if (cartItems.length === 0) {
         return (
@@ -162,9 +162,10 @@ export default function CartPage() {
                                 <span>Tax ({config.taxpercentage}%)</span>
                                 <span>₹{taxAmount.toFixed(2)}</span>
                             </div>
-                            {cartTotal < config.freeshippingcost && (
+                            {/* Only show this message if we have shippable items and haven't met the threshold yet */}
+                            {shippableCartTotal > 0 && shippableCartTotal < config.freeshippingcost && (
                                 <div className="text-xs text-gray-500 italic">
-                                    Add items worth ₹{(config.freeshippingcost - cartTotal).toFixed(2)} more for free shipping
+                                    Add items worth ₹{(config.freeshippingcost - shippableCartTotal).toFixed(2)} more for free shipping
                                 </div>
                             )}
                             <div className="border-t border-gray-100 pt-3 flex justify-between font-bold text-lg text-gray-900">

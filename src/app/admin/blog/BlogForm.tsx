@@ -198,8 +198,9 @@ export default function BlogForm({ initialData, isEditMode = false, onSuccess, o
                         name="slug"
                         value={formData.slug}
                         onChange={handleChange}
-                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all bg-gray-50"
+                        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary/50 focus:border-primary outline-none transition-all bg-gray-100 cursor-not-allowed"
                         placeholder="Auto-generated from title"
+                        readOnly={true}
                     />
                 </div>
 

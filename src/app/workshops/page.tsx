@@ -132,7 +132,7 @@ export default async function WorkshopsPage(props: { searchParams: Promise<{ q?:
                                         />
                                         <div className="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
                                             <div className="flex items-center gap-2">
-                                                <CoursePaymentButton course={workshop} />
+                                                <CoursePaymentButton course={workshop} itemType="workshop" />
                                             </div>
                                             <span className="text-primary font-bold text-sm group-hover:translate-x-1 transition-transform">
                                                 details &rarr;

@@ -38,11 +38,11 @@ const Hero = () => {
                             <h1 className="text-5xl md:text-7xl font-bold font-slider leading-tight">{slide.title}</h1>
                             <p className="text-lg md:text-xl text-gray-200 max-w-2xl mx-auto">{slide.description}</p>
                             <div className="pt-4">
-                                <Link href="/courses" className="border-white border-1 btn btn-primary mr-4">
-                                    Explore Courses
-                                </Link>
-                                <Link href="/shop" className="btn border-1 border-white bg-black text-white hover:bg-primary hover:border-primary transition-colors">
-                                    Shop Now
+                                <Link
+                                    href={slide.button_link || '/courses'}
+                                    className="btn btn-primary px-8 py-3 text-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all"
+                                >
+                                    {slide.button_text || 'Explore Courses'}
                                 </Link>
                             </div>
                         </div>
