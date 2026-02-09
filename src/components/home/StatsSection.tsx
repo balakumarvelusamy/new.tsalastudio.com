@@ -26,7 +26,7 @@ const StatsSection = () => {
                 <div className="flex flex-row justify-between md:justify-center gap-4 md:gap-12 overflow-x-auto px-4 pb-4 md:pb-0 scrollbar-hide">
                     {stats.map((stat, index) => (
                         <div key={index} className="flex-shrink-0 flex flex-col items-center justify-center w-28 h-28 md:w-40 md:h-40 bg-white/10 backdrop-blur-sm rounded-full border border-white/20 shadow-lg hover:bg-white/20 transition-all duration-300 group">
-                            <div className="text-2xl md:text-4xl font-bold text-secondary group-hover:scale-110 transition-transform">
+                            <div className="text-2xl md:text-4xl font-bold text-light group-hover:scale-110 transition-transform">
                                 {inView ? (
                                     <CountUp end={stat.value} duration={2.5} suffix={stat.suffix} />
                                 ) : (

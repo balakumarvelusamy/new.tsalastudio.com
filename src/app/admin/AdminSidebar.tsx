@@ -19,6 +19,7 @@ export default function AdminSidebar() {
         // { name: 'Migration', href: '/admin/migrate', icon: ArrowPathIcon },
         { name: 'Newsletter', href: '/admin/newsletter', icon: DocumentTextIcon }, // Reusing Icon for now or import EnvelopeIcon
         { name: 'Blog', href: '/admin/blog', icon: BookOpenIcon },
+        { name: 'About', href: '/admin/about', icon: DocumentTextIcon },
     ];
 
     const toggleSidebar = () => setIsOpen(!isOpen);
